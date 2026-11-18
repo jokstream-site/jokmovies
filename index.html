@@ -9,7 +9,7 @@
 </style>
 
 <style id="jok-library-v2">
-#jok-legacy-controls{display:none!important}#homeSections{display:grid;gap:28px;margin-top:24px}.library-row{min-width:0}.library-row .head{margin-bottom:14px}.library-row .head h2{font-size:20px;letter-spacing:.1px}.library-row .view-more{border:1px solid #f59e0b55;background:#17131e;color:#f8d58b;border-radius:22px;padding:8px 14px;font-size:12px}.library-row .cards{grid-auto-columns:clamp(132px,14vw,178px);scrollbar-width:thin;scrollbar-color:#8b5cf6 transparent}.library-row .card{position:relative}.library-row .poster{aspect-ratio:2/3}.library-row .info{padding:11px}.library-row .title{font-size:13px}.library-row .sub{font-size:11px}.library-row .kind{position:absolute;top:8px;left:8px;padding:5px 8px;border-radius:15px;background:#08070ddd;color:#f8d58b;font-size:10px;border:1px solid #f59e0b66}.hero{min-height:440px}.hero-copy{max-width:650px}.hero .eyebrow{font-weight:800}.catalog-empty{padding:22px;border:1px dashed #f59e0b55;border-radius:16px;color:#bcb5c5;line-height:1.7}.player-stage{display:grid;place-items:center;min-height:260px}.player-unavailable{max-width:560px;padding:28px;text-align:center;color:#bcb5c5;line-height:1.7}.player-unavailable strong{display:block;color:#f8d58b;font-size:18px;margin-bottom:10px}.player-unavailable .symbol{font-size:32px;color:#f59e0b;margin-bottom:10px}.subtitle-panel{margin:22px 0;padding:16px;border:1px solid #f59e0b33;border-radius:14px;background:#0b0a10}.subtitle-tools{display:flex;gap:9px;flex-wrap:wrap}.subtitle-results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:#aaa;font-size:13px}.subtitle-results a{color:#f8d58b;border:1px solid #f59e0b55;border-radius:18px;padding:7px 11px;text-decoration:none}.library-tag{color:#f8d58b;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.quick-categories{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 5px;scrollbar-width:thin}.quick-categories button{flex:none;border:1px solid #f59e0b45;background:#15121b;color:#e9dfcf;border-radius:22px;padding:9px 14px;font-size:12px}.quick-categories button:hover,.quick-categories button:focus{background:#f59e0b20;border-color:#f59e0b;color:#ffda8b}.library-row .view-more{cursor:pointer}.library-row .kind{z-index:1}#jok-legacy-controls{display:none!important}#homeSections{display:grid;gap:28px;margin-top:24px}.library-row{min-width:0}.library-row .head{margin-bottom:14px}.library-row .head h2{font-size:20px;letter-spacing:.1px}.library-row .view-more{border:1px solid #f59e0b55;background:#17131e;color:#f8d58b;border-radius:22px;padding:8px 14px;font-size:12px}.library-row .cards{grid-auto-columns:clamp(132px,14vw,178px);scrollbar-width:thin;scrollbar-color:#8b5cf6 transparent}.library-row .card{position:relative}.library-row .poster{aspect-ratio:2/3}.library-row .info{padding:11px}.library-row .title{font-size:13px}.library-row .sub{font-size:11px}.library-row .kind{position:absolute;top:8px;left:8px;padding:5px 8px;border-radius:15px;background:#08070ddd;color:#f8d58b;font-size:10px;border:1px solid #f59e0b66}.hero{min-height:440px}.hero-copy{max-width:650px}.hero .eyebrow{font-weight:800}.catalog-empty{padding:22px;border:1px dashed #f59e0b55;border-radius:16px;color:#bcb5c5;line-height:1.7}.player-stage{display:grid;place-items:center;min-height:260px}.player-unavailable{max-width:560px;padding:28px;text-align:center;color:#bcb5c5;line-height:1.7}.player-unavailable strong{display:block;color:#f8d58b;font-size:18px;margin-bottom:10px}.player-unavailable .symbol{font-size:32px;color:#f59e0b;margin-bottom:10px}.subtitle-panel{margin:22px 0;padding:16px;border:1px solid #f59e0b33;border-radius:14px;background:#0b0a10}.subtitle-tools{display:flex;gap:9px;flex-wrap:wrap}.subtitle-results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:#aaa;font-size:13px}.subtitle-results a{color:#f8d58b;border:1px solid #f59e0b55;border-radius:18px;padding:7px 11px;text-decoration:none}.library-tag{color:#f8d58b;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 @media(max-width:850px){.library-row .cards{grid-auto-columns:132px}.hero{min-height:350px}.library-row .head h2{font-size:17px}}
 
 #jokEmbedSources{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #ffffff16;background:#0b0a10}#jokEmbedSources button{border:1px solid #ffffff28;background:#17131e;color:#cfc8d8;border-radius:20px;padding:8px 12px;font-size:12px}#jokEmbedSources button.active{border-color:#f59e0b;color:#ffda8b;background:#f59e0b18}#jokEmbedFrame{display:none;width:100%;height:100%;min-height:260px;border:0;background:#000}#jokEmbedFrame.active{display:block}.embed-note{font-size:11px;color:#999;padding:0 14px 12px;line-height:1.5}
@@ -19,6 +19,9 @@
 <aside class="sidebar"><div class="brand"><div class="crown">♛</div><b>JOK</b><small>WATCH BEYOND LIMITS</small></div><nav class="nav" id="sideNav"><button data-view="home" class="active">⌂　Home</button><button data-view="movie">▣　Movies</button><button data-view="tv">▣　Series</button><button data-view="genres">▦　Genres</button><button data-view="trending">✦　Trending</button><button data-view="top">♜　Top Rated</button></nav><div style="margin-top:auto;color:#8b8494;font-size:11px;padding:10px">JOK · WATCH BEYOND LIMITS<br>Stories without limits.</div></aside>
 <main class="main"><header class="top"><select id="region" hidden aria-hidden="true"><option value="ES">ES</option></select><input class="search" id="search" placeholder="Search movies and series…"><select class="lang" id="lang"><option value="en-US">🌐 English</option><option value="ar-SA">🌐 العربية</option><option value="es-ES">🌐 Español</option><option value="fr-FR">🌐 Français</option></select></header>
 <section class="hero" id="hero"><div class="hero-copy"><div class="eyebrow">JOK ORIGINAL EXPERIENCE</div><h1 id="heroTitle">Discover your next story</h1><div class="meta" id="heroMeta">Premium cinema · Worldwide</div><p id="heroText">A world of movies and series, curated for you.</p><div class="actions"><button class="gold" id="heroPlay">▶ Watch Now</button><button class="ghost" id="heroInfo">More Info</button></div></div></section>
+<nav class="quick-categories" aria-label="Browse categories">
+<button data-view="genre-action">⚡ Action</button><button data-view="genre-drama">Drama</button><button data-view="genre-comedy">Comedy</button><button data-view="genre-thriller">Thriller</button><button data-view="genre-adventure">Adventure</button><button data-view="anime">Anime</button><button data-view="platform-netflix">Netflix</button><button data-view="platform-prime">Prime Video</button><button data-view="platform-disney">Disney+</button><button data-view="platform-max">Max</button><button data-view="platform-crunchyroll">Crunchyroll</button>
+</nav>
 <div id="homeSections"><div id="librarySections"></div></div>
 <section class="section hidden" id="browse"><div class="head"><h2 id="browseTitle">Movies</h2><select class="lang" id="sort"><option value="popularity.desc">Popular</option><option value="primary_release_date.desc">Newest</option><option value="vote_average.desc">Top Rated</option></select></div><div class="chips" id="catalogTools"></div><div class="browse-grid" id="results"></div></section>
 <div class="footer">JOK — WATCH BEYOND LIMITS</div></main>
@@ -330,20 +333,35 @@ async function jokFindSubtitles(item,type){
     api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
     api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
     api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
-    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2})
+    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
+    api("/discover/movie",{with_watch_providers:8,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_watch_providers:8,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/movie",{with_watch_providers:9,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_watch_providers:9,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/movie",{with_watch_providers:337,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_watch_providers:337,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/movie",{with_watch_providers:1899,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_watch_providers:1899,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/movie",{with_watch_providers:283,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_watch_providers:283,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1})
    ])
   ]);
   const feeds=feedResults.filter(x=>x.status==="fulfilled").map(x=>x.value);
   const genreNames={28:"Action",12:"Adventure",16:"Animation",35:"Comedy",80:"Crime",99:"Documentary",18:"Drama",10751:"Family",14:"Fantasy",36:"History",27:"Horror",9648:"Mystery",10749:"Romance",878:"Sci-Fi",53:"Thriller",10752:"War"};
   const byId=new Map();
   for(const item of manual.filter(Boolean))byId.set(item.media_type+":"+item.id,item);
-  for(const feed of feeds){for(const item of (feed?.results||[])){
+  const platformMeta=[["Netflix",8],["Netflix",8],["Prime Video",9],["Prime Video",9],["Disney+",337],["Disney+",337],["Max",1899],["Max",1899],["Crunchyroll",283],["Crunchyroll",283]];
+  const platformItems={"Netflix":[],"Prime Video":[],"Disney+":[],"Max":[],"Crunchyroll":[]};
+  for(let fi=0;fi<feeds.length;fi++){const feed=feeds[fi];for(const item of (feed?.results||[])){
    const type=item.media_type||(item.title||item.original_title?"movie":"tv");
    if(!item.poster_path||!item.id)continue;
    const cats=(item.genre_ids||[]).map(id=>genreNames[id]).filter(Boolean);
    if(item.original_language==="ja"&&cats.includes("Animation"))cats.push("Anime");
-   const entry={...item,media_type:type,jokCategories:[...new Set(cats)],jokAdded:item.jokAdded||"2026-11-18"};
-   byId.set(type+":"+item.id,{...(byId.get(type+":"+item.id)||{}),...entry});
+   const platform=fi>=12?platformMeta[fi-12]?.[0]:null;
+   const entry={...item,media_type:type,jokCategories:[...new Set(cats)],jokAdded:item.jokAdded||"",...(platform?{jokPlatform:platform}:{})};
+   const merged={...(byId.get(type+":"+item.id)||{}),...entry};
+   byId.set(type+":"+item.id,merged);
+   if(platform&&!platformItems[platform].some(x=>x.id===item.id&&x.media_type===type))platformItems[platform].push(merged);
   }}
   library=[...byId.values()].filter(x=>x.poster_path);
 
@@ -368,7 +386,20 @@ async function jokFindSubtitles(item,type){
    section(labels[locale()]||labels.en,byAdded),
    section(cats[0],movies),
    section(cats[1],series),
+   section(text("Action Movies","أفلام أكشن","Películas de acción","Films d'action"),movies.filter(x=>(x.genre_ids||[]).includes(28))),
+   section(text("Action Series","مسلسلات أكشن","Series de acción","Séries d'action"),series.filter(x=>(x.genre_ids||[]).includes(10759))),
+   section(text("Drama Movies","أفلام دراما","Películas dramáticas","Films dramatiques"),movies.filter(x=>(x.genre_ids||[]).includes(18))),
+   section(text("Drama Series","مسلسلات دراما","Series dramáticas","Séries dramatiques"),series.filter(x=>(x.genre_ids||[]).includes(18))),
+   section(text("Comedy Movies","أفلام كوميديا","Comedias","Comédies"),movies.filter(x=>(x.genre_ids||[]).includes(35))),
+   section(text("Comedy Series","مسلسلات كوميديا","Series de comedia","Séries comiques"),series.filter(x=>(x.genre_ids||[]).includes(35))),
+   section(text("Thriller Movies","أفلام تشويق","Thrillers","Thrillers"),movies.filter(x=>(x.genre_ids||[]).includes(53))),
+   section(text("Thriller Series","مسلسلات تشويق","Series de suspense","Séries à suspense"),series.filter(x=>(x.genre_ids||[]).includes(9648))),
    section(cats[2],anime),
+   section(text("Netflix","نتفلكس","Netflix","Netflix"),platformItems["Netflix"]),
+   section(text("Prime Video","برايم فيديو","Prime Video","Prime Video"),platformItems["Prime Video"]),
+   section(text("Disney+","ديزني+","Disney+","Disney+"),platformItems["Disney+"]),
+   section("Max",platformItems["Max"]),
+   section("Crunchyroll",platformItems["Crunchyroll"]),
    section(cats[3],action),
    section(cats[4],drama),
    section(cats[5],comedy),
@@ -386,6 +417,8 @@ async function jokFindSubtitles(item,type){
   if(view==="movie"||view==="movies"){items=library.filter(x=>x.media_type==="movie");heading=text("Movies","الأفلام","Películas","Films")}
   else if(view==="tv"||view==="series"){items=library.filter(x=>x.media_type==="tv");heading=text("Series","المسلسلات","Series","Séries")}
   else if(view==="anime"){items=library.filter(x=>x.jokCategories.includes("Anime")||(x.original_language==="ja"&&(x.genre_ids||[]).includes(16)));heading="Anime"}
+  else if(view.startsWith("genre-")){const g=view.slice(6);const ids={action:[28,10759],drama:[18],comedy:[35],thriller:[53,9648],adventure:[12]};const names={action:"Action",drama:"Drama",comedy:"Comedy",thriller:"Thriller",adventure:"Adventure"};items=library.filter(x=>(x.genre_ids||[]).some(id=>ids[g]?.includes(id)));heading=names[g]||g}
+  else if(view.startsWith("platform-")){const p={"platform-netflix":"Netflix","platform-prime":"Prime Video","platform-disney":"Disney+","platform-max":"Max","platform-crunchyroll":"Crunchyroll"}[view];items=library.filter(x=>x.jokPlatform===p);heading=p||view}
   else if(view==="trending"){items=[...library].sort((a,b)=>(b.popularity||0)-(a.popularity||0));heading=text("Trending in JOK","الرائج في JOK","Tendencias en JOK","Tendances JOK")}
   else if(view==="top"){items=[...library].sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));heading=text("Top Rated","الأعلى تقييماً","Mejor valoradas","Les mieux notés")}
   else if(view==="newest"){items=[...library].sort((a,b)=>(b.release_date||b.first_air_date||"").localeCompare(a.release_date||a.first_air_date||""));heading=text("Newest in JOK","الأحدث في JOK","Lo más nuevo","Nouveautés JOK")}
