@@ -4,7 +4,7 @@ exports.handler = async function(event) {
   const params = event.queryStringParameters || {};
   const type = params.type;
   if (type !== "movie" && type !== "tv") return { statusCode: 400, headers: { "Cache-Control": "no-store" }, body: JSON.stringify({ error: "type must be movie or tv" }) };
-  const ids = [...new Set(String(params.ids || "").split(",").filter(id => /^\\d{1,12}$/.test(id)))].slice(0, 60);
+  const ids = [...new Set(String(params.ids || "").split(",").filter(id => /^\d{1,12}$/.test(id)))].slice(0, 60);
   if (!ids.length) return { statusCode: 200, headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=120, s-maxage=300" }, body: JSON.stringify({ provider: "VidSrc", type, available: [] }) };
   const available = [];
   const check = async id => {
