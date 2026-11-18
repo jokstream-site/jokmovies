@@ -454,7 +454,7 @@ async function jokFindSubtitles(item,type){
  const JOK_EMBED_PROVIDERS=[{id:"vidlink",name:"VidLink",host:"vidlink.pro"},{id:"vidsrc",name:"VidSrc",host:"vidsrc.sh"}];
 function jokEmbedUrl(provider,item,type,episode){
  const id=String(item.id||"");
- if(!/^\\d+$/.test(id))throw Error("Invalid TMDB title ID");
+ if(!/^\d+$/.test(id))throw Error("Invalid TMDB title ID");
  if(provider.id==="vidlink"){
   if(type==="tv"&&episode)return "https://vidlink.pro/tv/"+id+"/"+Number(episode.season)+"/"+Number(episode.episode)+"?primaryColor=F59E0B&secondaryColor=241A0B&iconColor=FFF2D1&icons=default&player=default&title=true&poster=true&autoplay=false&nextbutton=true";
   if(type==="movie")return "https://vidlink.pro/movie/"+id+"?primaryColor=F59E0B&secondaryColor=241A0B&iconColor=FFF2D1&icons=default&player=default&title=true&poster=true&autoplay=false";
