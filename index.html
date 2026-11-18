@@ -446,7 +446,7 @@ async function jokFindSubtitles(item,type){
   setBrowse(text("Search results","نتائج البحث","Resultados","Résultats"),matches);
  };
  // Replace every navigation handler so old discover/platform pages cannot run.
- $("[data-view]").forEach(b=>b.onclick=()=>browseView(b.dataset.view));
+ $$("[data-view]").forEach(b=>b.onclick=()=>browseView(b.dataset.view));
  $("#sort").onchange=()=>{const v=$("#sort").value;if(v==="vote_average.desc")browseView("top");else if(v==="primary_release_date.desc")browseView("newest");else browseView("trending")};
  const similar=$("#similar");if(similar){similar.style.display="none";similar.previousElementSibling?.remove()}
  $("#region")?.remove();
