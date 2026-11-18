@@ -335,6 +335,7 @@ applyLanguage();jokApplyLabels();
   else if(view==="anime"){items=library.filter(x=>x.jokCategories.includes("Anime"));heading="Anime"}
   else if(view==="trending"){items=[...library].sort((a,b)=>(b.popularity||0)-(a.popularity||0));heading=text("Trending in JOK","الرائج في JOK","Tendencias en JOK","Tendances JOK")}
   else if(view==="top"){items=[...library].sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));heading=text("Top Rated","الأعلى تقييماً","Mejor valoradas","Les mieux notés")}
+  else if(view==="newest"){items=[...library].sort((a,b)=>(b.release_date||b.first_air_date||"").localeCompare(a.release_date||a.first_air_date||""));heading=text("Newest in JOK","الأحدث في JOK","Lo más nuevo","Nouveautés JOK")}
   setBrowse(heading,items);
  }
  window.loadHome=loadLibrary;window.browse=browseView;window.loadBrowse=(type)=>browseView(type);
@@ -347,7 +348,8 @@ applyLanguage();jokApplyLabels();
  };
  // Replace every navigation handler so old discover/platform pages cannot run.
  $("[data-view]").forEach(b=>b.onclick=()=>browseView(b.dataset.view));
- $("#sort").onchange=()=>browseView("top");
+ $("#sort").onchange=()=>{const v=$("#sort").value;if(v==="vote_average.desc")browseView("top");else if(v==="primary_release_date.desc")browseView("newest");else browseView("trending")};
+ const similar=$("#similar");if(similar){similar.style.display="none";similar.previousElementSibling?.remove()}
  $("#region")?.remove();
  // A player is not represented as playable unless a provider integration returns an authorized source.
  window.play=function(item,type,episode=null){
