@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#09090b">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#09090b"><meta http-equiv="Content-Security-Policy" content="frame-src https://vidsrc.sh https://vidsrc.tw https://vsembed.ru https://vsembed.su; object-src 'none'; base-uri 'self'">
 <title>JOK — Watch Beyond Limits</title>
 <style>
 :root{--bg:#09090b;--gold:#f59e0b;--gold2:#d97706;--purple:#8b5cf6;--muted:#aaa5b5;--line:#ffffff20}
@@ -12,6 +12,8 @@
 <style id="jok-library-v2">
 #jok-legacy-controls{display:none!important}#homeSections{display:grid;gap:28px;margin-top:24px}.library-row{min-width:0}.library-row .head{margin-bottom:14px}.library-row .head h2{font-size:20px;letter-spacing:.1px}.library-row .view-more{border:1px solid #f59e0b55;background:#17131e;color:#f8d58b;border-radius:22px;padding:8px 14px;font-size:12px}.library-row .cards{grid-auto-columns:clamp(132px,14vw,178px);scrollbar-width:thin;scrollbar-color:#8b5cf6 transparent}.library-row .card{position:relative}.library-row .poster{aspect-ratio:2/3}.library-row .info{padding:11px}.library-row .title{font-size:13px}.library-row .sub{font-size:11px}.library-row .kind{position:absolute;top:8px;left:8px;padding:5px 8px;border-radius:15px;background:#08070ddd;color:#f8d58b;font-size:10px;border:1px solid #f59e0b66}.hero{min-height:440px}.hero-copy{max-width:650px}.hero .eyebrow{font-weight:800}.catalog-empty{padding:22px;border:1px dashed #f59e0b55;border-radius:16px;color:#bcb5c5;line-height:1.7}.player-stage{display:grid;place-items:center;min-height:260px}.player-unavailable{max-width:560px;padding:28px;text-align:center;color:#bcb5c5;line-height:1.7}.player-unavailable strong{display:block;color:#f8d58b;font-size:18px;margin-bottom:10px}.player-unavailable .symbol{font-size:32px;color:#f59e0b;margin-bottom:10px}.subtitle-panel{margin:22px 0;padding:16px;border:1px solid #f59e0b33;border-radius:14px;background:#0b0a10}.subtitle-tools{display:flex;gap:9px;flex-wrap:wrap}.subtitle-results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:#aaa;font-size:13px}.subtitle-results a{color:#f8d58b;border:1px solid #f59e0b55;border-radius:18px;padding:7px 11px;text-decoration:none}.library-tag{color:#f8d58b;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 @media(max-width:850px){.library-row .cards{grid-auto-columns:132px}.hero{min-height:350px}.library-row .head h2{font-size:17px}}
+
+#jokEmbedSources{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #ffffff16;background:#0b0a10}#jokEmbedSources button{border:1px solid #ffffff28;background:#17131e;color:#cfc8d8;border-radius:20px;padding:8px 12px;font-size:12px}#jokEmbedSources button.active{border-color:#f59e0b;color:#ffda8b;background:#f59e0b18}#jokEmbedFrame{display:none;width:100%;height:100%;min-height:260px;border:0;background:#000}#jokEmbedFrame.active{display:block}.embed-note{font-size:11px;color:#999;padding:0 14px 12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -23,7 +25,7 @@
 <div class="footer">JOK — WATCH BEYOND LIMITS</div></main>
 <nav class="bottom"><button data-view="home"><span>⌂</span>Home</button><button data-view="movie"><span>▣</span>Movies</button><button data-view="tv"><span>▣</span>Series</button><button data-view="genres"><span>▦</span>Genres</button><button data-view="trending"><span>✦</span>Trending</button></nav>
 <div class="modal" id="details"><div class="panel"><button class="close" id="closeDetails">✕</button><div class="detail-hero" id="detailHero"><div class="detail-copy"><h1 id="detailTitle"></h1><div class="meta" id="detailMeta"></div><p id="detailOverview"></p><button class="gold" id="detailPlay">▶ Play Now</button></div></div><div class="detail-body"><h3>Cast</h3><div id="cast"></div><section class="subtitle-panel" id="subtitlePanel"><h3>Subtitles</h3><div class="subtitle-tools"><select id="subtitleLanguage" class="lang"><option value="ar,fr,es,en">Arabic · French · Spanish · English</option><option value="ar">Arabic</option><option value="fr">French</option><option value="es">Spanish</option><option value="en">English</option></select><button class="gold" id="findSubtitles" type="button">Find subtitles</button></div><div id="subtitleResults" class="subtitle-results">Search subtitles when you need them.</div></section><section id="seasons" class="hidden"><h3>Seasons & Episodes</h3><select class="lang" id="season"></select><div id="episodes"></div></section><h3>You May Also Like</h3><div class="cards" id="similar"></div></div></div></div>
-<div class="modal" id="player"><div class="panel player-panel"><div class="player-top"><b id="playerTitle">JOK Player</b><button class="server" id="closePlayer" aria-label="Close player">✕</button></div><div id="jok-legacy-controls" hidden><input id="jokStreamUrl"><input id="jokSubtitleUrl"><input id="jokSubtitleLabel"><button id="jokLoadStream" type="button">Disabled</button></div><div class="player-stage" id="stage"><div class="placeholder" id="placeholder"><div class="player-unavailable"><div class="symbol">♛</div><strong>JOK Player</strong><span id="playerStatus">Checking for an authorized playback source…</span></div></div><div id="jokArtPlayer" class="jok-artplayer"></div></div><p class="player-note" id="playerNote">JOK Player · playback sources will appear only when an authorized provider is connected.</p></div></div>
+<div class="modal" id="player"><div class="panel player-panel"><div class="player-top"><b id="playerTitle">JOK Player</b><button class="server" id="closePlayer" aria-label="Close player">✕</button></div><div id="jok-legacy-controls" hidden><input id="jokStreamUrl"><input id="jokSubtitleUrl"><input id="jokSubtitleLabel"><button id="jokLoadStream" type="button">Disabled</button></div><div id="jokEmbedSources" aria-label="Playback sources"></div><div class="player-stage" id="stage"><div class="placeholder" id="placeholder"><div class="player-unavailable"><div class="symbol">♛</div><strong>JOK Player</strong><span id="playerStatus">Choose an available embed source to try playback.</span></div></div><iframe id="jokEmbedFrame" title="JOK external video player" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe><div id="jokArtPlayer" class="jok-artplayer"></div></div><p class="player-note" id="playerNote">External embed player · popup and top-page navigation restrictions are enabled where supported.</p><p class="embed-note">External player content and advertising are controlled by the provider. JOK cannot inspect or guarantee what appears inside a cross-origin frame.</p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script><script src="https://cdn.jsdelivr.net/npm/artplayer@5.2.2/dist/artplayer.js"></script>
 <script src="/catalog.js"></script>
 <script>
@@ -75,7 +77,7 @@ let jokArtInstance=null;
 async function play(item,type,episode=null){current=item;currentType=type;currentEpisode=episode;$("#details").classList.remove("open");$("#player").classList.add("open");$("#playerTitle").textContent=episode?title(item)+" — S"+episode.season+" E"+episode.episode+" · "+episode.title:title(item);$("#jokStreamUrl").value="";$("#jokSubtitleUrl").value="";$("#jokSubtitleLabel").value="";$("#placeholder").classList.remove("hidden");$("#placeholder").textContent="Paste an authorized stream URL to start playback."}
 function jokDestroyPlayer(){if(jokArtInstance){try{if(jokArtInstance.__jokHls)jokArtInstance.__jokHls.destroy();jokArtInstance.destroy(false)}catch(_){}jokArtInstance=null}const host=$("#jokArtPlayer");host.classList.remove("active");host.replaceChildren()}
 function jokLoadStream(){const url=$("#jokStreamUrl").value.trim(),subtitle=$("#jokSubtitleUrl").value.trim(),label=$("#jokSubtitleLabel").value.trim()||"Subtitles";if(!url){$("#playerNote").textContent="Enter a stream URL first.";return}let parsed;try{parsed=new URL(url)}catch(_){$("#playerNote").textContent="Invalid URL.";return}if(!["https:","http:"].includes(parsed.protocol)){ $("#playerNote").textContent="Only HTTP(S) URLs are supported.";return}const host=$("#jokArtPlayer");jokDestroyPlayer();host.classList.add("active");$("#placeholder").classList.add("hidden");try{jokArtInstance=new Artplayer({container:host,url,autoplay:false,volume:.7,fullscreen:true,setting:true,playbackRate:true,aspectRatio:true,theme:"#f59e0b",customType:{m3u8(video,src){if(window.Hls&&Hls.isSupported()){const h=new Hls();h.loadSource(src);h.attachMedia(video);h.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal)$("#playerNote").textContent="Playback error: "+d.details});jokArtInstance.__jokHls=h}else if(video.canPlayType("application/vnd.apple.mpegurl"))video.src=src;else $("#playerNote").textContent="HLS is not supported in this browser."}}});if(subtitle){const su=new URL(subtitle);if(!["https:","http:"].includes(su.protocol))throw Error("Invalid subtitle URL");jokArtInstance.subtitle.url=subtitle;jokArtInstance.subtitle.name=label}$("#playerNote").textContent="JOK Player ready · "+(parsed.pathname.toLowerCase().endsWith(".m3u8")?"HLS":"Direct video")}catch(e){jokDestroyPlayer();$("#placeholder").classList.remove("hidden");$("#placeholder").textContent="Player error: "+e.message}}
-function closePlayer(){jokDestroyPlayer();$("#player").classList.remove("open");$("#placeholder").classList.remove("hidden")}
+function closePlayer(){jokDestroyPlayer();if(typeof jokResetEmbed==="function")jokResetEmbed();$("#player").classList.remove("open");$("#placeholder").classList.remove("hidden")}
 async function browse(view){$("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");let type=view==="tv"?"tv":"movie";$("#browseTitle").textContent=view==="trending"?"Trending":view==="top"?"Top Rated":type==="tv"?"Series":"Movies";await loadBrowse(type,view==="trending"?"popularity.desc":view==="top"?"vote_average.desc":$("#sort").value)}
 async function loadBrowse(type,sort){try{let today=new Date().toISOString().slice(0,10),dateField=type==="tv"?"first_air_date.lte":"primary_release_date.lte",votes=type==="tv"?20:50;let d=await api("/discover/"+type,{sort_by:sort,page:1,[dateField]:today,"vote_count.gte":votes});$("#results").replaceChildren(...d.results.filter(x=>x.poster_path&&Number(x.vote_count||0)>=votes).map(x=>card(x,type)))}catch(e){$("#results").textContent=e.message}}
 const genres=[["Action",28],["Adventure",12],["Animation",16],["Comedy",35],["Crime",80],["Documentary",99],["Drama",18],["Family",10751],["Fantasy",14],["History",36],["Horror",27],["Mystery",9648],["Romance",10749],["Science Fiction",878],["Thriller",53],["War",10752]];
@@ -404,13 +406,45 @@ async function jokFindSubtitles(item,type){
  const similar=$("#similar");if(similar){similar.style.display="none";similar.previousElementSibling?.remove()}
  $("#region")?.remove();
  // A player is not represented as playable unless a provider integration returns an authorized source.
- window.play=function(item,type,episode=null){
+ const JOK_EMBED_PROVIDERS=[
+  {id:"vidsrc-main",name:"VidSrc",host:"vidsrc.sh"},
+  {id:"vidsrc-alt",name:"VidSrc Mirror",host:"vidsrc.tw"},
+  {id:"vsembed",name:"VSEmbed",host:"vsembed.ru"}
+];
+function jokEmbedUrl(provider,item,type,episode){
+ const id=String(item.id||"");
+ if(!/^\\d+$/.test(id))throw Error("Invalid TMDB title ID");
+ const base="https://"+provider.host+"/embed/"+(type==="tv"?"tv/":"movie/")+id;
+ return type==="tv"&&episode?base+"/"+Number(episode.season)+"/"+Number(episode.episode):base;
+}
+function jokLoadEmbed(provider){
+ const frame=$("#jokEmbedFrame");if(!current)return;
+ let url;try{url=jokEmbedUrl(provider,current,currentType,currentEpisode)}catch(e){$("#playerStatus").textContent=e.message;return}
+ $("#jokEmbedSources").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.provider===provider.id));
+ $("#placeholder").classList.add("hidden");frame.classList.add("active");
+ frame.src="about:blank";requestAnimationFrame(()=>{frame.src=url});
+ $("#playerStatus").textContent="Loading "+provider.name+"…";
+ $("#playerNote").textContent="Source: "+provider.name+" · third-party embed. Popups are restricted by the iframe sandbox; some providers may not work under these restrictions.";
+}
+function jokResetEmbed(){
+ const frame=$("#jokEmbedFrame");if(frame){frame.src="about:blank";frame.classList.remove("active")}
+ $("#jokEmbedSources")?.replaceChildren();
+}
+function jokRenderEmbedSources(){
+ const box=$("#jokEmbedSources");box.replaceChildren();
+ for(const provider of JOK_EMBED_PROVIDERS){
+  const b=document.createElement("button");b.type="button";b.textContent=provider.name;b.dataset.provider=provider.id;
+  b.addEventListener("click",()=>jokLoadEmbed(provider));box.append(b);
+ }
+}
+window.play=function(item,type,episode=null){
   current=item;currentType=type;currentEpisode=episode;
   $("#details").classList.remove("open");$("#player").classList.add("open");
   $("#playerTitle").textContent=episode?title(item)+" — S"+episode.season+" E"+episode.episode:title(item);
+  jokResetEmbed();jokRenderEmbedSources();
   $("#placeholder").classList.remove("hidden");
-  $("#playerStatus").textContent=text("No authorized playback provider is connected yet. Your catalog and metadata are ready; playback will activate when a licensed stream provider is configured.","لا يوجد مزوّد تشغيل مصرح متصل حالياً. المكتبة والبيانات جاهزة، وسيُفعّل التشغيل عند ربط مزوّد بث مرخّص.","Todavía no hay un proveedor de reproducción autorizado conectado.","Aucun fournisseur de lecture autorisé n’est encore connecté.");
-  $("#playerNote").textContent=text("JOK Player · no external link entry · provider integration pending.","مشغل JOK · لا حاجة لإدخال روابط خارجية · تكامل مزوّد التشغيل قيد الربط.","JOK Player · integración del proveedor pendiente.","JOK Player · intégration du fournisseur en attente.");
+  $("#playerStatus").textContent=text("Select an embed source. If one fails, try another source.","اختر مصدر تضمين. إذا لم يعمل أحدها، جرّب مصدراً آخر.","Elige una fuente de inserción.","Choisissez une source intégrée.");
+  $("#playerNote").textContent=text("JOK embed player · popup and top-level navigation restrictions are applied to the embedded frame.","مشغل تضمين JOK · فُرضت قيود على النوافذ المنبثقة والتنقل إلى الصفحة الرئيسية للإطار المضمّن.","JOK embed player · popup restrictions enabled.","Lecteur intégré JOK · restrictions anti-pop-up activées.");
  };
  $("#closePlayer").onclick=closePlayer;
  loadLibrary();
