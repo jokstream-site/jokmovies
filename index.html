@@ -122,7 +122,7 @@ async function jokEpisodes(){
  const from=jokShiftDate(-7),to=jokLocalDate();
  try{
   const candidates=await jokDiscover("tv",{sort_by:"popularity.desc","air_date.gte":from,"air_date.lte":to,"vote_count.gte":3});
-  const details=await Promise.all(candidates.slice(0,18).map(async x=>{try{return await api("/tv/"+x.id)}catch(_){return null}}));
+  const details=await Promise.all(candidates.slice(0,10).map(async x=>{try{return await api("/tv/"+x.id)}catch(_){return null}}));
   const items=details.filter(x=>x&&x.poster_path&&x.last_episode_to_air&&jokWithin(x.last_episode_to_air.air_date,from,to));
   items.sort((a,b)=>(b.last_episode_to_air.air_date||"").localeCompare(a.last_episode_to_air.air_date||""));
   jokRow("latestEpisodes",items,"tv");return items;
@@ -194,7 +194,7 @@ async function jokHero(items){
 }
 async function loadHome(){
  const today=jokLocalDate(),month=jokShiftDate(-30),week=jokShiftDate(-7);
- const [movies,episodes,series,weekly,trending,regionFeed]=await Promise.all([
+ const [movies,episodes,series,weekly,regionFeed,trending]=await Promise.all([
   jokStrictRow("latestMovies","movie",{sort_by:"primary_release_date.desc","vote_count.gte":5},month,today,"primary_release_date"),
   jokEpisodes(),
   jokStrictRow("latestSeries","tv",{sort_by:"first_air_date.desc","vote_count.gte":3},month,today,"first_air_date"),
