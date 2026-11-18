@@ -44,7 +44,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],api
 const subtitleLangs=()=>[langMap[lang]||"en",...["en","ar","fr","es"].filter(x=>x!==(langMap[lang]||"en"))].slice(0,3).join(",");
 const title=x=>x.title||x.name||"Untitled",date=x=>x.release_date||x.first_air_date||"",img=(p,size="w342")=>p?IMG+size+p:"";
 async function api(path,params={}){if(!TMDB_API_KEY||TMDB_API_KEY==="YOUR_TMDB_API_KEY_HERE")throw Error("Add your TMDB API key in the JavaScript section.");let u=new URL(BASE+path);u.searchParams.set("api_key",TMDB_API_KEY);u.searchParams.set("language",apiLang());u.searchParams.set("include_adult","false");Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));let key="jok:"+u;try{let c=JSON.parse(sessionStorage.getItem(key)||"null");if(c&&Date.now()-c.time<1200000)return c.data}catch(e){}let r=await fetch(u);if(!r.ok)throw Error("TMDB request failed: "+r.status);let d=await r.json();try{sessionStorage.setItem(key,JSON.stringify({time:Date.now(),data:d}))}catch(e){}return d}
-function card(x,type){let el=document.createElement("article");el.className="card";el.innerHTML='<img class="poster" loading="lazy" decoding="async" src="'+img(x.poster_path)+'" alt=""><div class="info"><div class="title"></div><div class="sub"><span></span><span class="rating">★ '+Number(x.vote_average||0).toFixed(1)+'</span></div></div>';el.querySelector(".title").textContent=title(x);el.querySelector(".sub span").textContent=(date(x)||"").slice(0,4);el.addEventListener("click",()=>showDetails(x,type));return el}
+function card(x,type){let el=document.createElement("article");el.className="card";el.innerHTML='<img class="poster" loading="lazy" decoding="async" src="'+img(x.poster_path)+'" alt=""><div class="info"><div class="title"></div><div class="sub"><span></span><span class="rating">★ '+Number(x.vote_average||0).toFixed(1)+'</span></div></div>';el.querySelector(".title").textContent=title(x);el.querySelector(".sub span").textContent=((type==="tv"?(x.last_episode_to_air?.air_date||x.first_air_date):(x.release_date||""))||"").slice(0,4);el.addEventListener("click",()=>showDetails(x,type));return el}
 function fill(id,items,type){let e=$("#"+id);e.replaceChildren(...(items||[]).filter(x=>x.poster_path).map(x=>card(x,type)))}
 async function row(path,id,type,params={}){let target=$("#"+id);try{let d=await api(path,params);let minVotes=type==="movie"?50:20;let items=(d.results||[]).filter(x=>x.poster_path&&Number(x.vote_count||0)>=minVotes);fill(id,items,type);return items}catch(err){target.replaceChildren();let note=document.createElement("p");note.className="load-error";note.textContent="Unable to load titles: "+(err?.message||"Unknown error");target.append(note);console.error("JOK section load failed:",id,err);return []}}
 async function loadHome(){try{let today=new Date().toISOString().slice(0,10);let [m,tv,n,h,k]=await Promise.all([row("/discover/movie","latestMovies","movie",{sort_by:"popularity.desc","primary_release_date.lte":today,"release_date.lte":today,"vote_count.gte":50}),row("/discover/tv","latestSeries","tv",{sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","netflix","tv",{with_networks:213,sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","hulu","tv",{with_networks:453,sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","kdrama","tv",{with_original_language:"ko",sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20})]);heroItem=m[0]||tv[0];if(heroItem){let typ=m[0]?"movie":"tv";$("#hero").style.backgroundImage="url('"+img(heroItem.backdrop_path,"w780")+"')";$("#heroTitle").textContent=title(heroItem);$("#heroMeta").textContent="★ "+Number(heroItem.vote_average||0).toFixed(1)+" · "+(date(heroItem)||"").slice(0,4);$("#heroText").textContent=heroItem.overview||"";$("#heroPlay").onclick=()=>play(heroItem,typ);$("#heroInfo").onclick=()=>showDetails(heroItem,typ)}}catch(e){$("#heroText").textContent=e.message}}
@@ -101,8 +101,8 @@ async function jokEpisodes(){
   jokRow("latestEpisodes",items,"tv");return items;
  }catch(e){jokRow("latestEpisodes",[],"tv");console.error("JOK episode feed",e);return []}
 }
-async function jokPlatforms(){
- const box=$("#platformChips");box.textContent="Loading platforms…";
+async function jokPlatforms(targetId="platformChips"){
+ const box=$("#"+targetId);box.textContent="Loading platforms…";
  try{
   const [movieData,tvData]=await Promise.all([api("/watch/providers/movie",{watch_region:jokRegion}),api("/watch/providers/tv",{watch_region:jokRegion})]);
   const providerMap=new Map();[...(movieData.results||[]),...(tvData.results||[])].forEach(x=>{if(x.provider_name)providerMap.set(x.provider_id,x)});
@@ -112,12 +112,12 @@ async function jokPlatforms(){
   if(!providers.length)box.textContent="No providers listed for this country.";
  }catch(e){box.textContent="Streaming platform data is temporarily unavailable."}
 }
-function jokStudios(){
- const box=$("#studioChips");box.replaceChildren();
+function jokStudios(targetId="studioChips"){
+ const box=$("#"+targetId);box.replaceChildren();
  JOK_STUDIOS.forEach(name=>{const b=document.createElement("button");b.className="chip";b.textContent=name;b.onclick=()=>jokStudioPage(name);box.append(b)});
 }
-function jokWorld(){
- const box=$("#worldChips");box.replaceChildren();
+function jokWorld(targetId="worldChips"){
+ const box=$("#"+targetId);box.replaceChildren();
  JOK_COUNTRIES.forEach(c=>{const b=document.createElement("button");b.className="chip";b.textContent=c.name;b.onclick=()=>jokWorldPage(c);box.append(b)});
  const langs=[["Korean","ko"],["Japanese","ja"],["Hindi","hi"],["Turkish","tr"],["Spanish","es"],["French","fr"],["Chinese","zh"],["Thai","th"],["Arabic","ar"],["Italian","it"],["German","de"]];
  langs.forEach(([name,code])=>{const b=document.createElement("button");b.className="chip";b.textContent=name;b.onclick=()=>jokLanguagePage(name,code);box.append(b)});
@@ -180,9 +180,9 @@ async function loadHome(){
 async function browse(view){
  $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#catalogTools").replaceChildren();
  if(view==="trending"){ $("#browseTitle").textContent="Trending this week";try{const d=await api("/trending/all/week");const today=jokLocalDate();const a=(d.results||[]).filter(x=>["movie","tv"].includes(x.media_type)&&x.poster_path&&(x.media_type==="movie"?(x.release_date||""):(x.first_air_date||""))&&(x.media_type==="movie"?(x.release_date||""):(x.first_air_date||""))<=today);$("#results").replaceChildren(...a.map(x=>card(x,x.media_type)))}catch(e){$("#results").textContent="Trending titles are unavailable."}return}
- if(view==="platforms"){$("#browseTitle").textContent="Streaming Platforms · "+jokRegion;await jokDual({watch_region:jokRegion,sort_by:"popularity.desc"},{watch_region:jokRegion,sort_by:"popularity.desc"});return}
- if(view==="studios"){$("#browseTitle").textContent="Production Studios";jokStudios();$("#results").textContent="Choose a studio from the home library.";return}
- if(view==="world"){$("#browseTitle").textContent="World Cinema";jokWorld();$("#results").textContent="Choose a country from the home library.";return}
+ if(view==="platforms"){$("#browseTitle").textContent="Streaming Platforms · "+jokRegion;$("#results").replaceChildren();await jokPlatforms("catalogTools");return}
+ if(view==="studios"){$("#browseTitle").textContent="Production Studios";$("#results").replaceChildren();jokStudios("catalogTools");return}
+ if(view==="world"){$("#browseTitle").textContent="World Cinema";$("#results").replaceChildren();jokWorld("catalogTools");return}
  const type=view==="tv"?"tv":"movie";$("#browseTitle").textContent=view==="trending"?"Trending":view==="top"?"Top Rated":type==="tv"?"Series":"Movies";
  await loadBrowse(type,view==="trending"?"popularity.desc":view==="top"?"vote_average.desc":$("#sort").value);
 }
@@ -192,13 +192,23 @@ async function loadBrowse(type,sort){
 function initGenres(){
  $("#genres").replaceChildren(...genres.map(([name,id])=>{const b=document.createElement("button");b.className="chip";b.textContent=name;b.onclick=async()=>{await browse("movie");$("#browseTitle").textContent=name;const a=await jokDiscover("movie",{with_genres:id,sort_by:"popularity.desc","primary_release_date.lte":jokLocalDate()});$("#results").replaceChildren(...a.filter(x=>x.poster_path&&(x.release_date||"")<=jokLocalDate()).map(x=>card(x,"movie")))};return b}));
 }
-$("#region").value=jokRegion;$("#region").onchange=e=>{jokRegion=e.target.value;localStorage.setItem("jok-region",jokRegion);loadHome()};
+$("#region").value=jokRegion;$("#region").onchange=e=>{jokRegion=e.target.value;localStorage.setItem("jok-region",jokRegion);loadHome();if(!$("#browse").classList.contains("hidden")&&$("#browseTitle").textContent.startsWith("Streaming Platforms"))browse("platforms")};
+$("[data-view]").forEach(b=>b.onclick=()=>{const v=b.dataset.view;if(v==="home"){$("#homeSections").classList.remove("hidden");$("#browse").classList.add("hidden");loadHome()}else if(v==="genres"){$("#homeSections").classList.remove("hidden");$("#browse").classList.add("hidden");$("#genres").scrollIntoView({behavior:"smooth"})}else browse(v)});
 $("#search").oninput=async e=>{const q=e.target.value.trim();if(q.length<2)return;try{const d=await api("/search/multi",{query:q,page:1});const today=jokLocalDate();const a=d.results.filter(x=>{const date=x.media_type==="movie"?(x.release_date||""):(x.first_air_date||"");return ["movie","tv"].includes(x.media_type)&&x.poster_path&&date&&date<=today});$("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent="Search";$("#results").replaceChildren(...a.map(x=>card(x,x.media_type)))}catch(e){console.error("JOK search",e)}};
 
-applyLanguage();
-const jokHeadings=lang==="ar-SA"?["أحدث الأفلام · آخر 30 يوماً","حلقات جديدة · آخر 7 أيام","مسلسلات جديدة · آخر 30 يوماً","أفلام هذا الأسبوع","الأكثر رواجاً","استكشف منصات المشاهدة","استكشف شركات الإنتاج","سينما العالم · البلد واللغة","استكشف التصنيفات"]:["Latest Movie Releases · Last 30 Days","New Episodes · Last 7 Days","New Series · Last 30 Days","Movies Released This Week","Trending · Separate From New Releases","Explore Streaming Platforms","Explore Production Studios","World Cinema · Country & Language","Explore Genres"];
-$("#homeSections .head h2").forEach((h,i)=>{if(jokHeadings[i])h.textContent=jokHeadings[i]});
-const navLabels=lang==="ar-SA"?["الرئيسية","الأفلام","المسلسلات","التصنيفات","الرائج","الأعلى تقييماً","المنصات","شركات الإنتاج","سينما العالم"]:["Home","Movies","Series","Genres","Trending","Top Rated","Platforms","Studios","World Cinema"];
-$("#sideNav button").forEach((b,i)=>{const glyph=["⌂","▣","▣","▦","✦","♜","▣","▤","◎"][i]||"";b.textContent=glyph+"　"+(navLabels[i]||"")});
+function jokApplyLabels(){
+ const labels={
+ "en-US":{heads:["Latest Movie Releases · Last 30 Days","New Episodes · Last 7 Days","New Series · Last 30 Days","Movies Released This Week","Trending","Streaming Platforms","Production Studios","World Cinema · Country & Language","Explore Genres"],nav:["Home","Movies","Series","Genres","Trending","Top Rated","Platforms","Studios","World Cinema"]},
+ "ar-SA":{heads:["أحدث الأفلام · آخر 30 يوماً","حلقات جديدة · آخر 7 أيام","مسلسلات جديدة · آخر 30 يوماً","أفلام هذا الأسبوع","الأكثر رواجاً","منصات المشاهدة","شركات الإنتاج","سينما العالم · البلد واللغة","استكشف التصنيفات"],nav:["الرئيسية","الأفلام","المسلسلات","التصنيفات","الرائج","الأعلى تقييماً","المنصات","شركات الإنتاج","سينما العالم"]},
+ "es-ES":{heads:["Estrenos de cine · Últimos 30 días","Nuevos episodios · Últimos 7 días","Nuevas series · Últimos 30 días","Películas de esta semana","Tendencias","Plataformas","Productoras","Cine mundial · País e idioma","Explorar géneros"],nav:["Inicio","Películas","Series","Géneros","Tendencias","Mejor valoradas","Plataformas","Productoras","Cine mundial"]},
+ "fr-FR":{heads:["Films récents · 30 derniers jours","Nouveaux épisodes · 7 derniers jours","Nouvelles séries · 30 derniers jours","Films de la semaine","Tendances","Plateformes","Studios","Cinéma mondial · Pays et langue","Explorer les genres"],nav:["Accueil","Films","Séries","Genres","Tendances","Mieux notés","Plateformes","Studios","Cinéma mondial"]}
+ };
+ const t=labels[lang]||labels["en-US"];
+ $("#homeSections .head h2").forEach((h,i)=>{h.textContent=t.heads[i]||h.textContent});
+ const glyph=["⌂","▣","▣","▦","✦","♜","▣","▤","◎"];
+ $("#sideNav button").forEach((b,i)=>{b.textContent=glyph[i]+"　"+(t.nav[i]||"")});
+}
+function setLanguage(v){lang=v;localStorage.setItem(LANGKEY,v);applyLanguage();jokApplyLabels();loadHome()}
+applyLanguage();jokApplyLabels();
 initGenres();loadHome();
 </script></body></html>
