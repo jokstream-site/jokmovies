@@ -334,30 +334,22 @@ async function jokFindSubtitles(item,type){
     api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
     api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
     api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
-    api("/discover/movie",{with_watch_providers:8,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/tv",{with_watch_providers:8,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/movie",{with_watch_providers:9,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/tv",{with_watch_providers:9,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/movie",{with_watch_providers:337,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/tv",{with_watch_providers:337,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/movie",{with_watch_providers:1899,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/tv",{with_watch_providers:1899,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/movie",{with_watch_providers:283,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}),
-    api("/discover/tv",{with_watch_providers:283,watch_region:"ES",with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1})
-   ])
+    ...[
+    ["Netflix",8],["Prime Video",9],["Disney+",337],["Max",1899],["Crunchyroll",283]
+   ].flatMap(([name,provider])=>["US","GB","IN","JP"].flatMap(region=>["movie","tv"].map(type=>api("/discover/"+type,{with_watch_providers:provider,watch_region:region,with_watch_monetization_types:"flatrate",sort_by:"popularity.desc",page:1}))))])
   ]);
   const feeds=feedResults.filter(x=>x.status==="fulfilled").map(x=>x.value);
   const genreNames={28:"Action",12:"Adventure",16:"Animation",35:"Comedy",80:"Crime",99:"Documentary",18:"Drama",10751:"Family",14:"Fantasy",36:"History",27:"Horror",9648:"Mystery",10749:"Romance",878:"Sci-Fi",53:"Thriller",10752:"War"};
   const byId=new Map();
   for(const item of manual.filter(Boolean))byId.set(item.media_type+":"+item.id,item);
-  const platformMeta=[["Netflix",8],["Netflix",8],["Prime Video",9],["Prime Video",9],["Disney+",337],["Disney+",337],["Max",1899],["Max",1899],["Crunchyroll",283],["Crunchyroll",283]];
+  const platformMeta=[...["Netflix","Prime Video","Disney+","Max","Crunchyroll"].flatMap(name=>Array.from({length:8},()=>name))];
   const platformItems={"Netflix":[],"Prime Video":[],"Disney+":[],"Max":[],"Crunchyroll":[]};
   for(let fi=0;fi<feeds.length;fi++){const feed=feeds[fi];for(const item of (feed?.results||[])){
    const type=item.media_type||(item.title||item.original_title?"movie":"tv");
    if(!item.poster_path||!item.id)continue;
    const cats=(item.genre_ids||[]).map(id=>genreNames[id]).filter(Boolean);
    if(item.original_language==="ja"&&cats.includes("Animation"))cats.push("Anime");
-   const platform=fi>=12?platformMeta[fi-12]?.[0]:null;
+   const platform=fi>=12?platformMeta[fi-12]:null;
    const entry={...item,media_type:type,jokCategories:[...new Set(cats)],jokAdded:item.jokAdded||"",...(platform?{jokPlatform:platform}:{})};
    const merged={...(byId.get(type+":"+item.id)||{}),...entry};
    byId.set(type+":"+item.id,merged);
@@ -395,11 +387,11 @@ async function jokFindSubtitles(item,type){
    section(text("Thriller Movies","أفلام تشويق","Thrillers","Thrillers"),movies.filter(x=>(x.genre_ids||[]).includes(53))),
    section(text("Thriller Series","مسلسلات تشويق","Series de suspense","Séries à suspense"),series.filter(x=>(x.genre_ids||[]).includes(9648))),
    section(cats[2],anime),
-   section(text("Netflix","نتفلكس","Netflix","Netflix"),platformItems["Netflix"]),
-   section(text("Prime Video","برايم فيديو","Prime Video","Prime Video"),platformItems["Prime Video"]),
-   section(text("Disney+","ديزني+","Disney+","Disney+"),platformItems["Disney+"]),
-   section("Max",platformItems["Max"]),
-   section("Crunchyroll",platformItems["Crunchyroll"]),
+   section(text("Netflix · selected global regions","Netflix · مناطق عالمية مختارة","Netflix · regiones globales","Netflix · régions mondiales"),platformItems["Netflix"]),
+   section(text("Prime Video · selected global regions","Prime Video · مناطق عالمية مختارة","Prime Video · regiones globales","Prime Video · régions mondiales"),platformItems["Prime Video"]),
+   section(text("Disney+ · selected global regions","Disney+ · مناطق عالمية مختارة","Disney+ · regiones globales","Disney+ · régions mondiales"),platformItems["Disney+"]),
+   section(text("Max · selected global regions","Max · مناطق عالمية مختارة","Max · regiones globales","Max · régions mondiales"),platformItems["Max"]),
+   section(text("Crunchyroll · selected global regions","Crunchyroll · مناطق عالمية مختارة","Crunchyroll · regiones globales","Crunchyroll · régions mondiales"),platformItems["Crunchyroll"]),
    section(cats[3],action),
    section(cats[4],drama),
    section(cats[5],comedy),
@@ -438,11 +430,7 @@ async function jokFindSubtitles(item,type){
  const similar=$("#similar");if(similar){similar.style.display="none";similar.previousElementSibling?.remove()}
  $("#region")?.remove();
  // A player is not represented as playable unless a provider integration returns an authorized source.
- const JOK_EMBED_PROVIDERS=[
-  {id:"vidsrc-main",name:"VidSrc",host:"vidsrc.sh"},
-  {id:"vidsrc-alt",name:"VidSrc Mirror",host:"vidsrc.tw"},
-  {id:"vsembed",name:"VSEmbed",host:"vsembed.ru"}
-];
+ const JOK_EMBED_PROVIDERS=[{id:"vidsrc",name:"VidSrc",host:"vidsrc.sh"}];
 function jokEmbedUrl(provider,item,type,episode){
  const id=String(item.id||"");
  if(!/^\\d+$/.test(id))throw Error("Invalid TMDB title ID");
