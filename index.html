@@ -10,7 +10,7 @@
 </style>
 
 <style id="jok-library-v2">
-#jok-legacy-controls{display:none!important}#homeSections{display:grid;gap:28px;margin-top:24px}.library-row{min-width:0}.library-row .head{margin-bottom:14px}.library-row .head h2{font-size:20px;letter-spacing:.1px}.library-row .view-more{border:1px solid #f59e0b55;background:#17131e;color:#f8d58b;border-radius:22px;padding:8px 14px;font-size:12px}.library-row .cards{grid-auto-columns:clamp(132px,14vw,178px);scrollbar-width:thin;scrollbar-color:#8b5cf6 transparent}.library-row .card{position:relative}.library-row .poster{aspect-ratio:2/3}.library-row .info{padding:11px}.library-row .title{font-size:13px}.library-row .sub{font-size:11px}.library-row .kind{position:absolute;top:8px;left:8px;padding:5px 8px;border-radius:15px;background:#08070ddd;color:#f8d58b;font-size:10px;border:1px solid #f59e0b66}.hero{min-height:440px}.hero-copy{max-width:650px}.hero .eyebrow{font-weight:800}.catalog-empty{padding:22px;border:1px dashed #f59e0b55;border-radius:16px;color:#bcb5c5;line-height:1.7}.player-stage{display:grid;place-items:center;min-height:260px}.player-unavailable{max-width:560px;padding:28px;text-align:center;color:#bcb5c5;line-height:1.7}.player-unavailable strong{display:block;color:#f8d58b;font-size:18px;margin-bottom:10px}.player-unavailable .symbol{font-size:32px;color:#f59e0b;margin-bottom:10px}.library-tag{color:#f8d58b;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+#jok-legacy-controls{display:none!important}#homeSections{display:grid;gap:28px;margin-top:24px}.library-row{min-width:0}.library-row .head{margin-bottom:14px}.library-row .head h2{font-size:20px;letter-spacing:.1px}.library-row .view-more{border:1px solid #f59e0b55;background:#17131e;color:#f8d58b;border-radius:22px;padding:8px 14px;font-size:12px}.library-row .cards{grid-auto-columns:clamp(132px,14vw,178px);scrollbar-width:thin;scrollbar-color:#8b5cf6 transparent}.library-row .card{position:relative}.library-row .poster{aspect-ratio:2/3}.library-row .info{padding:11px}.library-row .title{font-size:13px}.library-row .sub{font-size:11px}.library-row .kind{position:absolute;top:8px;left:8px;padding:5px 8px;border-radius:15px;background:#08070ddd;color:#f8d58b;font-size:10px;border:1px solid #f59e0b66}.hero{min-height:440px}.hero-copy{max-width:650px}.hero .eyebrow{font-weight:800}.catalog-empty{padding:22px;border:1px dashed #f59e0b55;border-radius:16px;color:#bcb5c5;line-height:1.7}.player-stage{display:grid;place-items:center;min-height:260px}.player-unavailable{max-width:560px;padding:28px;text-align:center;color:#bcb5c5;line-height:1.7}.player-unavailable strong{display:block;color:#f8d58b;font-size:18px;margin-bottom:10px}.player-unavailable .symbol{font-size:32px;color:#f59e0b;margin-bottom:10px}.subtitle-panel{margin:22px 0;padding:16px;border:1px solid #f59e0b33;border-radius:14px;background:#0b0a10}.subtitle-tools{display:flex;gap:9px;flex-wrap:wrap}.subtitle-results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:#aaa;font-size:13px}.subtitle-results a{color:#f8d58b;border:1px solid #f59e0b55;border-radius:18px;padding:7px 11px;text-decoration:none}.library-tag{color:#f8d58b;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 @media(max-width:850px){.library-row .cards{grid-auto-columns:132px}.hero{min-height:350px}.library-row .head h2{font-size:17px}}
 </style>
 </head>
@@ -22,7 +22,7 @@
 <section class="section hidden" id="browse"><div class="head"><h2 id="browseTitle">Movies</h2><select class="lang" id="sort"><option value="popularity.desc">Popular</option><option value="primary_release_date.desc">Newest</option><option value="vote_average.desc">Top Rated</option></select></div><div class="chips" id="catalogTools"></div><div class="browse-grid" id="results"></div></section>
 <div class="footer">JOK — WATCH BEYOND LIMITS</div></main>
 <nav class="bottom"><button data-view="home"><span>⌂</span>Home</button><button data-view="movie"><span>▣</span>Movies</button><button data-view="tv"><span>▣</span>Series</button><button data-view="genres"><span>▦</span>Genres</button><button data-view="trending"><span>✦</span>Trending</button></nav>
-<div class="modal" id="details"><div class="panel"><button class="close" id="closeDetails">✕</button><div class="detail-hero" id="detailHero"><div class="detail-copy"><h1 id="detailTitle"></h1><div class="meta" id="detailMeta"></div><p id="detailOverview"></p><button class="gold" id="detailPlay">▶ Play Now</button></div></div><div class="detail-body"><h3>Cast</h3><div id="cast"></div><section id="seasons" class="hidden"><h3>Seasons & Episodes</h3><select class="lang" id="season"></select><div id="episodes"></div></section><h3>You May Also Like</h3><div class="cards" id="similar"></div></div></div></div>
+<div class="modal" id="details"><div class="panel"><button class="close" id="closeDetails">✕</button><div class="detail-hero" id="detailHero"><div class="detail-copy"><h1 id="detailTitle"></h1><div class="meta" id="detailMeta"></div><p id="detailOverview"></p><button class="gold" id="detailPlay">▶ Play Now</button></div></div><div class="detail-body"><h3>Cast</h3><div id="cast"></div><section class="subtitle-panel" id="subtitlePanel"><h3>Subtitles</h3><div class="subtitle-tools"><select id="subtitleLanguage" class="lang"><option value="ar,fr,es,en">Arabic · French · Spanish · English</option><option value="ar">Arabic</option><option value="fr">French</option><option value="es">Spanish</option><option value="en">English</option></select><button class="gold" id="findSubtitles" type="button">Find subtitles</button></div><div id="subtitleResults" class="subtitle-results">Search subtitles when you need them.</div></section><section id="seasons" class="hidden"><h3>Seasons & Episodes</h3><select class="lang" id="season"></select><div id="episodes"></div></section><h3>You May Also Like</h3><div class="cards" id="similar"></div></div></div></div>
 <div class="modal" id="player"><div class="panel player-panel"><div class="player-top"><b id="playerTitle">JOK Player</b><button class="server" id="closePlayer" aria-label="Close player">✕</button></div><div id="jok-legacy-controls" hidden><input id="jokStreamUrl"><input id="jokSubtitleUrl"><input id="jokSubtitleLabel"><button id="jokLoadStream" type="button">Disabled</button></div><div class="player-stage" id="stage"><div class="placeholder" id="placeholder"><div class="player-unavailable"><div class="symbol">♛</div><strong>JOK Player</strong><span id="playerStatus">Checking for an authorized playback source…</span></div></div><div id="jokArtPlayer" class="jok-artplayer"></div></div><p class="player-note" id="playerNote">JOK Player · playback sources will appear only when an authorized provider is connected.</p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script><script src="https://cdn.jsdelivr.net/npm/artplayer@5.2.2/dist/artplayer.js"></script>
 <script src="/catalog.js"></script>
@@ -68,7 +68,7 @@ function card(x,type){let el=document.createElement("article");el.className="car
 function fill(id,items,type){let e=$("#"+id);e.replaceChildren(...(items||[]).filter(x=>x.poster_path).map(x=>card(x,type)))}
 async function row(path,id,type,params={}){let target=$("#"+id);try{let d=await api(path,params);let minVotes=type==="movie"?50:20;let items=(d.results||[]).filter(x=>x.poster_path&&Number(x.vote_count||0)>=minVotes);fill(id,items,type);return items}catch(err){target.replaceChildren();let note=document.createElement("p");note.className="load-error";note.textContent="Unable to load titles: "+(err?.message||"Unknown error");target.append(note);console.error("JOK section load failed:",id,err);return []}}
 async function loadHome(){try{let today=new Date().toISOString().slice(0,10);let [m,tv,n,h,k]=await Promise.all([row("/discover/movie","latestMovies","movie",{sort_by:"popularity.desc","primary_release_date.lte":today,"release_date.lte":today,"vote_count.gte":50}),row("/discover/tv","latestSeries","tv",{sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","netflix","tv",{with_networks:213,sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","hulu","tv",{with_networks:453,sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20}),row("/discover/tv","kdrama","tv",{with_original_language:"ko",sort_by:"popularity.desc","first_air_date.lte":today,"vote_count.gte":20})]);heroItem=m[0]||tv[0];if(heroItem){let typ=m[0]?"movie":"tv";$("#hero").style.backgroundImage="url('"+img(heroItem.backdrop_path,"w780")+"')";$("#heroTitle").textContent=title(heroItem);$("#heroMeta").textContent="★ "+Number(heroItem.vote_average||0).toFixed(1)+" · "+(date(heroItem)||"").slice(0,4);$("#heroText").textContent=heroItem.overview||"";$("#heroPlay").onclick=()=>play(heroItem,typ);$("#heroInfo").onclick=()=>showDetails(heroItem,typ)}}catch(e){$("#heroText").textContent=e.message}}
-async function showDetails(item,type){current=item;currentType=type;$("#details").classList.add("open");$("#detailHero").style.backgroundImage="url('"+img(item.backdrop_path,"w780")+"')";$("#detailTitle").textContent=title(item);$("#detailMeta").textContent="★ "+Number(item.vote_average||0).toFixed(1)+" · "+(date(item)||"").slice(0,4);$("#detailOverview").textContent=item.overview||"";$("#detailPlay").onclick=()=>play(item,type);$("#cast").textContent="Loading cast…";$("#similar").replaceChildren();try{let [c,s]=await Promise.all([api("/"+type+"/"+item.id+"/credits"),api("/"+type+"/"+item.id+"/similar")]);$("#cast").textContent=(c.cast||[]).slice(0,12).map(x=>x.name).join(" · ")||"Cast information unavailable";fill("similar",s.results||[],type)}catch(e){$("#cast").textContent=e.message}if(type==="tv"){try{let d=await api("/tv/"+item.id);$("#seasons").classList.remove("hidden");const realSeasons=(d.seasons||[]).filter(x=>Number(x.season_number)>0);$("#season").innerHTML=realSeasons.map(x=>'<option value="'+x.season_number+'">'+x.name+'</option>').join("");$("#season").onchange=()=>loadEpisodes(item.id,$("#season").value);if(realSeasons.length)loadEpisodes(item.id,realSeasons[0].season_number);else $("#episodes").textContent="No regular seasons are listed."}catch(e){}}else $("#seasons").classList.add("hidden")}
+async function showDetails(item,type){current=item;currentType=type;$("#subtitleResults").textContent="Search subtitles when you need them.";$("#findSubtitles").onclick=()=>jokFindSubtitles(item,type);$("#details").classList.add("open");$("#detailHero").style.backgroundImage="url('"+img(item.backdrop_path,"w780")+"')";$("#detailTitle").textContent=title(item);$("#detailMeta").textContent="★ "+Number(item.vote_average||0).toFixed(1)+" · "+(date(item)||"").slice(0,4);$("#detailOverview").textContent=item.overview||"";$("#detailPlay").onclick=()=>play(item,type);$("#cast").textContent="Loading cast…";$("#similar").replaceChildren();try{let [c,s]=await Promise.all([api("/"+type+"/"+item.id+"/credits"),api("/"+type+"/"+item.id+"/similar")]);$("#cast").textContent=(c.cast||[]).slice(0,12).map(x=>x.name).join(" · ")||"Cast information unavailable";fill("similar",s.results||[],type)}catch(e){$("#cast").textContent=e.message}if(type==="tv"){try{let d=await api("/tv/"+item.id);$("#seasons").classList.remove("hidden");const realSeasons=(d.seasons||[]).filter(x=>Number(x.season_number)>0);$("#season").innerHTML=realSeasons.map(x=>'<option value="'+x.season_number+'">'+x.name+'</option>').join("");$("#season").onchange=()=>loadEpisodes(item.id,$("#season").value);if(realSeasons.length)loadEpisodes(item.id,realSeasons[0].season_number);else $("#episodes").textContent="No regular seasons are listed."}catch(e){}}else $("#seasons").classList.add("hidden")}
 async function loadEpisodes(id,n){let box=$("#episodes");box.textContent="Loading episodes…";try{let d=await api("/tv/"+id+"/season/"+n);box.replaceChildren();(d.episodes||[]).forEach(ep=>{let item=document.createElement("button");item.type="button";item.className="episode";let poster=document.createElement("img");poster.className="episode-still";poster.loading="lazy";poster.alt="";poster.src=img(ep.still_path,"w300");let body=document.createElement("span");body.className="episode-copy";let name=document.createElement("b");name.textContent=ep.episode_number+". "+ep.name;let overview=document.createElement("span");overview.textContent=ep.overview||"Play this episode";body.append(name,overview);item.append(poster,body);item.addEventListener("click",()=>play(current,"tv",{season:Number(n),episode:Number(ep.episode_number),title:ep.name}));box.append(item)})}catch(e){box.textContent=e.message}}
 function progressKey(){return current?"player_progress:"+currentType+":"+current.id:null}
 let jokArtInstance=null;
@@ -264,6 +264,24 @@ function jokApplyLabels(){
 function setLanguage(v){lang=v;localStorage.setItem(LANGKEY,v);applyLanguage();jokApplyLabels();loadHome()}
 applyLanguage();jokApplyLabels();
 
+
+async function jokFindSubtitles(item,type){
+ const box=$("#subtitleResults"),btn=$("#findSubtitles");box.textContent="Searching subtitle providers…";btn.disabled=true;
+ try{
+  const p=new URLSearchParams({id:String(item.id),language:$("#subtitleLanguage").value});
+  if(type==="tv"&&currentEpisode){p.set("season",String(currentEpisode.season));p.set("episode",String(currentEpisode.episode))}
+  const r=await fetch("/.netlify/functions/subtitles?"+p.toString(),{headers:{Accept:"application/json"}});
+  const data=await r.json();if(!r.ok)throw Error(data.error||"Subtitle service unavailable");
+  box.replaceChildren();
+  if(!Array.isArray(data.subtitles)||!data.subtitles.length){box.textContent="No subtitles found for the selected languages.";return}
+  for(const s of data.subtitles){
+   if(!s.url)continue;const a=document.createElement("a");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";
+   a.textContent=(s.display||s.language||"Subtitle")+" · "+(s.format||"file")+(s.source?" · "+s.source:"");box.append(a);
+  }
+  if(!box.children.length)box.textContent="No downloadable subtitle results.";
+ }catch(e){box.textContent=e.message}finally{btn.disabled=false}
+}
+
 /* JOK curated library v2 — metadata only from TMDB, never random discover feeds. */
 (()=>{
  const catalog=Array.isArray(window.JOK_CATALOG)?window.JOK_CATALOG:[];
@@ -300,14 +318,38 @@ applyLanguage();jokApplyLabels();
  async function loadLibrary(){
   const host=$("#librarySections");host.replaceChildren();
   const note=document.createElement("p");note.className="catalog-empty";note.textContent=text("Loading the JOK curated library…","جارٍ تحميل مكتبة JOK المختارة…","Cargando la biblioteca JOK…","Chargement de la bibliothèque JOK…");host.append(note);
-  const loaded=(await Promise.all(catalog.map(getItem))).filter(Boolean).filter(x=>x.poster_path);
-  library=loaded;
+  
+  const [manual,feeds]=await Promise.all([
+   Promise.all(catalog.map(getItem)),
+   Promise.all([
+    api("/trending/all/week",{page:1}),api("/trending/all/week",{page:2}),
+    api("/movie/popular",{page:1}),api("/movie/popular",{page:2}),
+    api("/tv/popular",{page:1}),api("/tv/popular",{page:2}),
+    api("/movie/top_rated",{page:1}),api("/tv/top_rated",{page:1}),
+    api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
+    api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
+    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1})
+   ]).catch(e=>{console.warn("JOK discovery feeds unavailable",e);return []})
+  ]);
+  const genreNames={28:"Action",12:"Adventure",16:"Animation",35:"Comedy",80:"Crime",99:"Documentary",18:"Drama",10751:"Family",14:"Fantasy",36:"History",27:"Horror",9648:"Mystery",10749:"Romance",878:"Sci-Fi",53:"Thriller",10752:"War"};
+  const byId=new Map();
+  for(const item of manual.filter(Boolean))byId.set(item.media_type+":"+item.id,item);
+  for(const feed of feeds){for(const item of (feed?.results||[])){
+   const type=item.media_type||(item.title||item.original_title?"movie":"tv");
+   if(!item.poster_path||!item.id)continue;
+   const cats=(item.genre_ids||[]).map(id=>genreNames[id]).filter(Boolean);
+   if(item.original_language==="ja"&&cats.includes("Animation"))cats.push("Anime");
+   const entry={...item,media_type:type,jokCategories:[...new Set(cats)],jokAdded:item.jokAdded||"2026-11-18"};
+   byId.set(type+":"+item.id,{...(byId.get(type+":"+item.id)||{}),...entry});
+  }}
+  library=[...byId.values()].filter(x=>x.poster_path);
+
   if(!library.length){host.replaceChildren();const empty=document.createElement("div");empty.className="catalog-empty";empty.textContent=text("The JOK catalog is ready for your TMDB IDs. Add titles in catalog.js and they will appear here automatically.","كتالوج JOK جاهز لإضافة معرّفات TMDB. أضف الأعمال في catalog.js وستظهر هنا تلقائياً.","El catálogo JOK está listo para tus IDs de TMDB.","Le catalogue JOK est prêt pour vos identifiants TMDB.");host.append(empty);return}
   const byAdded=[...library].sort((a,b)=>(b.jokAdded||"").localeCompare(a.jokAdded||""));
   const movies=library.filter(x=>x.media_type==="movie"),series=library.filter(x=>x.media_type==="tv");
-  const anime=library.filter(x=>x.jokCategories.includes("Anime"));
-  const action=library.filter(x=>x.jokCategories.includes("Action"));
-  const drama=library.filter(x=>x.jokCategories.includes("Drama"));
+  const anime=library.filter(x=>x.jokCategories.includes("Anime")||(x.original_language==="ja"&&(x.genre_ids||[]).includes(16)));
+  const action=library.filter(x=>x.jokCategories.includes("Action")||(x.genre_ids||[]).includes(28));
+  const drama=library.filter(x=>x.jokCategories.includes("Drama")||(x.genre_ids||[]).includes(18));
   const featured=library.filter(x=>catalog.find(c=>c.id===x.id&&c.featured));
   const hero=featured[0]||byAdded[0];heroItem=hero;
   $("#hero").style.backgroundImage="url('"+img(hero.backdrop_path||hero.poster_path,"w1280")+"')";
@@ -332,7 +374,7 @@ applyLanguage();jokApplyLabels();
   let heading=view;
   if(view==="movie"||view==="movies"){items=library.filter(x=>x.media_type==="movie");heading=text("Movies","الأفلام","Películas","Films")}
   else if(view==="tv"||view==="series"){items=library.filter(x=>x.media_type==="tv");heading=text("Series","المسلسلات","Series","Séries")}
-  else if(view==="anime"){items=library.filter(x=>x.jokCategories.includes("Anime"));heading="Anime"}
+  else if(view==="anime"){items=library.filter(x=>x.jokCategories.includes("Anime")||(x.original_language==="ja"&&(x.genre_ids||[]).includes(16)));heading="Anime"}
   else if(view==="trending"){items=[...library].sort((a,b)=>(b.popularity||0)-(a.popularity||0));heading=text("Trending in JOK","الرائج في JOK","Tendencias en JOK","Tendances JOK")}
   else if(view==="top"){items=[...library].sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));heading=text("Top Rated","الأعلى تقييماً","Mejor valoradas","Les mieux notés")}
   else if(view==="newest"){items=[...library].sort((a,b)=>(b.release_date||b.first_air_date||"").localeCompare(a.release_date||a.first_air_date||""));heading=text("Newest in JOK","الأحدث في JOK","Lo más nuevo","Nouveautés JOK")}
