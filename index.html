@@ -16,7 +16,7 @@
 <div id="homeSections"><section class="section"><div class="head"><h2>Latest Movie Releases · Last 30 Days</h2></div><div class="cards" id="latestMovies"></div></section><section class="section"><div class="head"><h2>New Episodes · Last 7 Days</h2></div><div class="cards" id="latestEpisodes"></div></section><section class="section"><div class="head"><h2>New Series · Last 30 Days</h2></div><div class="cards" id="latestSeries"></div></section><section class="section"><div class="head"><h2>Movies Released This Week</h2></div><div class="cards" id="weeklyMovies"></div></section><section class="section"><div class="head"><h2>Trending · Separate From New Releases</h2></div><div class="cards" id="trendingNow"></div></section><section class="section"><div class="head"><h2>Explore Streaming Platforms</h2></div><div class="chips" id="platformChips"></div></section><section class="section"><div class="head"><h2>Explore Production Studios</h2></div><div class="chips" id="studioChips"></div></section><section class="section"><div class="head"><h2>World Cinema · Country & Language</h2></div><div class="chips" id="worldChips"></div></section><section class="section"><div class="head"><h2>Explore Genres</h2></div><div class="chips" id="genres"></div></section></div>
 <section class="section hidden" id="browse"><div class="head"><h2 id="browseTitle">Movies</h2><select class="lang" id="sort"><option value="popularity.desc">Popular</option><option value="primary_release_date.desc">Newest</option><option value="vote_average.desc">Top Rated</option></select></div><div class="chips" id="catalogTools"></div><div class="browse-grid" id="results"></div></section>
 <div class="footer">JOK — WATCH BEYOND LIMITS</div></main>
-<nav class="bottom"><button data-view="home"><span>⌂</span>Home</button><button data-view="movie"><span>▣</span>Movies</button><button data-view="tv"><span>▣</span>Series</button><button data-view="genres"><span>▦</span>Genres</button><button data-view="trending"><span>✦</span>Trending</button><button data-view="platforms"><span>▣</span>Platforms</button><button data-view="studios"><span>▤</span>Studios</button><button data-view="world"><span>◎</span>World</button></nav>
+<nav class="bottom"><button data-view="home"><span>⌂</span>Home</button><button data-view="movie"><span>▣</span>Movies</button><button data-view="tv"><span>▣</span>Series</button><button data-view="genres"><span>▦</span>Genres</button><button data-view="trending"><span>✦</span>Trending</button></nav>
 <div class="modal" id="details"><div class="panel"><button class="close" id="closeDetails">✕</button><div class="detail-hero" id="detailHero"><div class="detail-copy"><h1 id="detailTitle"></h1><div class="meta" id="detailMeta"></div><p id="detailOverview"></p><button class="gold" id="detailPlay">▶ Play Now</button></div></div><div class="detail-body"><h3>Cast</h3><div id="cast"></div><section id="seasons" class="hidden"><h3>Seasons & Episodes</h3><select class="lang" id="season"></select><div id="episodes"></div></section><h3>You May Also Like</h3><div class="cards" id="similar"></div></div></div></div>
 <div class="modal" id="player"><div class="panel player-panel"><div class="player-top"><b id="playerTitle">JOK Player</b><div class="servers"><button class="server active" data-server="0">JOK Player</button><button class="server" id="closePlayer" aria-label="Close player">✕</button></div></div><div class="player-stage" id="stage"><div class="placeholder" id="placeholder">The JOK player will appear here when you start playback.</div></div><p class="player-note" id="playerNote">Playback controls are available directly in the player. JOK popup protection is active for windows opened by this page.</p></div></div>
 <script>
@@ -94,8 +94,9 @@ async function jokStrictRow(id,type,params,start,end,dateParam){
 async function jokEpisodes(){
  const from=jokShiftDate(-7),to=jokLocalDate();
  try{
-  const data=await jokDiscover("tv",{sort_by:"popularity.desc","air_date.gte":from,"air_date.lte":to,"vote_count.gte":3});
-  const items=data.filter(x=>x.poster_path&&x.last_episode_to_air&&jokWithin(x.last_episode_to_air.air_date,from,to));
+  const candidates=await jokDiscover("tv",{sort_by:"popularity.desc","air_date.gte":from,"air_date.lte":to,"vote_count.gte":3});
+  const details=await Promise.all(candidates.slice(0,18).map(async x=>{try{return await api("/tv/"+x.id)}catch(_){return null}}));
+  const items=details.filter(x=>x&&x.poster_path&&x.last_episode_to_air&&jokWithin(x.last_episode_to_air.air_date,from,to));
   items.sort((a,b)=>(b.last_episode_to_air.air_date||"").localeCompare(a.last_episode_to_air.air_date||""));
   jokRow("latestEpisodes",items,"tv");return items;
  }catch(e){jokRow("latestEpisodes",[],"tv");console.error("JOK episode feed",e);return []}
@@ -117,6 +118,8 @@ function jokStudios(){
 function jokWorld(){
  const box=$("#worldChips");box.replaceChildren();
  JOK_COUNTRIES.forEach(c=>{const b=document.createElement("button");b.className="chip";b.textContent=c.name;b.onclick=()=>jokWorldPage(c);box.append(b)});
+ const langs=[["Korean","ko"],["Japanese","ja"],["Hindi","hi"],["Turkish","tr"],["Spanish","es"],["French","fr"],["Chinese","zh"],["Thai","th"],["Arabic","ar"],["Italian","it"],["German","de"]];
+ langs.forEach(([name,code])=>{const b=document.createElement("button");b.className="chip";b.textContent=name;b.onclick=()=>jokLanguagePage(name,code);box.append(b)});
 }
 async function jokDual(movieParams,tvParams){
  const root=$("#results");root.replaceChildren();
@@ -125,7 +128,7 @@ async function jokDual(movieParams,tvParams){
   const h=document.createElement("h3");h.textContent=heading;const grid=document.createElement("div");grid.className="browse-grid";section.append(h,grid);root.append(section);
   try{
    const items=await jokDiscover(type,{...params,page:1});
-   const safe=items.filter(x=>x.poster_path&&(type==="movie"?(x.release_date||""):(x.first_air_date||""))<=jokLocalDate());
+   const safe=items.filter(x=>{const d=type==="movie"?(x.release_date||""):(x.first_air_date||"");return x.poster_path&&d&&d<=jokLocalDate()});
    safe.sort((a,b)=>jokRelease(b,type).localeCompare(jokRelease(a,type)));
    safe.forEach(x=>grid.append(card(x,type)));
    if(!safe.length){const p=document.createElement("p");p.className="empty-state";p.textContent="No matching titles found.";grid.append(p)}
@@ -146,6 +149,10 @@ async function jokWorldPage(c){
  $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent="Cinema from "+c.name;
  await jokDual({with_origin_country:c.code,sort_by:"primary_release_date.desc"},{with_origin_country:c.code,sort_by:"first_air_date.desc"});
 }
+async function jokLanguagePage(name,code){
+ $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent=name+" language cinema";
+ await jokDual({with_original_language:code,sort_by:"primary_release_date.desc"},{with_original_language:code,sort_by:"first_air_date.desc"});
+}
 async function jokHero(items){
  jokHeroItems=items.filter(Boolean);if(!jokHeroItems.length)return;
  jokHeroItems.sort((a,b)=>jokRelease(b,a.media_type==="tv"?"tv":"movie").localeCompare(jokRelease(a,a.media_type==="tv"?"tv":"movie")));
@@ -164,7 +171,7 @@ async function loadHome(){
   jokEpisodes(),
   jokStrictRow("latestSeries","tv",{sort_by:"first_air_date.desc","vote_count.gte":3},month,today,"first_air_date"),
   jokStrictRow("weeklyMovies","movie",{sort_by:"primary_release_date.desc","vote_count.gte":3},week,today,"primary_release_date"),
-  (async()=>{try{const d=await api("/trending/all/week");const a=(d.results||[]).filter(x=>["movie","tv"].includes(x.media_type)&&x.poster_path&&(x.media_type==="movie"?(x.release_date||""):(x.first_air_date||""))<=today);const el=$("#trendingNow");el.replaceChildren(...a.slice(0,24).map(x=>card(x,x.media_type)));return a.slice(0,12)}catch(e){return []}})()
+  (async()=>{try{const d=await api("/trending/all/week");const a=(d.results||[]).filter(x=>{const date=x.media_type==="movie"?(x.release_date||""):(x.first_air_date||"");return ["movie","tv"].includes(x.media_type)&&x.poster_path&&date&&date<=today});const el=$("#trendingNow");el.replaceChildren(...a.slice(0,24).map(x=>card(x,x.media_type)));return a.slice(0,12)}catch(e){return []}})()
  ]);
  const pool=[...movies.slice(0,5).map(x=>({...x,media_type:"movie"})),...episodes.slice(0,4).map(x=>({...x,media_type:"tv"})),...series.slice(0,3).map(x=>({...x,media_type:"tv"}))];
  await jokHero(pool.length?pool:trending);await Promise.all([jokPlatforms()]);jokStudios();jokWorld();
@@ -178,13 +185,18 @@ async function browse(view){
  await loadBrowse(type,view==="trending"?"popularity.desc":view==="top"?"vote_average.desc":$("#sort").value);
 }
 async function loadBrowse(type,sort){
- try{const today=jokLocalDate(),field=type==="tv"?"first_air_date.lte":"primary_release_date.lte";const a=await jokDiscover(type,{sort_by:sort,page:1,[field]:today,"vote_count.gte":type==="tv"?3:5});const safe=a.filter(x=>x.poster_path&&(type==="tv"?(x.first_air_date||""):(x.release_date||""))<=today);$("#results").replaceChildren(...safe.map(x=>card(x,type)))}catch(e){$("#results").textContent="Unable to load titles. Please try again."}
+ try{const today=jokLocalDate(),field=type==="tv"?"first_air_date.lte":"primary_release_date.lte";const a=await jokDiscover(type,{sort_by:sort,page:1,[field]:today,"vote_count.gte":type==="tv"?3:5});const safe=a.filter(x=>{const d=type==="tv"?(x.first_air_date||""):(x.release_date||"");return x.poster_path&&d&&d<=today});$("#results").replaceChildren(...safe.map(x=>card(x,type)))}catch(e){$("#results").textContent="Unable to load titles. Please try again."}
 }
 function initGenres(){
  $("#genres").replaceChildren(...genres.map(([name,id])=>{const b=document.createElement("button");b.className="chip";b.textContent=name;b.onclick=async()=>{await browse("movie");$("#browseTitle").textContent=name;const a=await jokDiscover("movie",{with_genres:id,sort_by:"popularity.desc","primary_release_date.lte":jokLocalDate()});$("#results").replaceChildren(...a.filter(x=>x.poster_path&&(x.release_date||"")<=jokLocalDate()).map(x=>card(x,"movie")))};return b}));
 }
 $("#region").value=jokRegion;$("#region").onchange=e=>{jokRegion=e.target.value;localStorage.setItem("jok-region",jokRegion);loadHome()};
-$("#search").oninput=async e=>{const q=e.target.value.trim();if(q.length<2)return;try{const d=await api("/search/multi",{query:q,page:1});const today=jokLocalDate();const a=d.results.filter(x=>["movie","tv"].includes(x.media_type)&&x.poster_path&&(x.media_type==="movie"?(x.release_date||""):(x.first_air_date||""))<=today);$("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent="Search";$("#results").replaceChildren(...a.map(x=>card(x,x.media_type)))}catch(e){console.error("JOK search",e)}};
+$("#search").oninput=async e=>{const q=e.target.value.trim();if(q.length<2)return;try{const d=await api("/search/multi",{query:q,page:1});const today=jokLocalDate();const a=d.results.filter(x=>{const date=x.media_type==="movie"?(x.release_date||""):(x.first_air_date||"");return ["movie","tv"].includes(x.media_type)&&x.poster_path&&date&&date<=today});$("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent="Search";$("#results").replaceChildren(...a.map(x=>card(x,x.media_type)))}catch(e){console.error("JOK search",e)}};
 
-applyLanguage();initGenres();loadHome();
+applyLanguage();
+const jokHeadings=lang==="ar-SA"?["أحدث الأفلام · آخر 30 يوماً","حلقات جديدة · آخر 7 أيام","مسلسلات جديدة · آخر 30 يوماً","أفلام هذا الأسبوع","الأكثر رواجاً","استكشف منصات المشاهدة","استكشف شركات الإنتاج","سينما العالم · البلد واللغة","استكشف التصنيفات"]:["Latest Movie Releases · Last 30 Days","New Episodes · Last 7 Days","New Series · Last 30 Days","Movies Released This Week","Trending · Separate From New Releases","Explore Streaming Platforms","Explore Production Studios","World Cinema · Country & Language","Explore Genres"];
+$("#homeSections .head h2").forEach((h,i)=>{if(jokHeadings[i])h.textContent=jokHeadings[i]});
+const navLabels=lang==="ar-SA"?["الرئيسية","الأفلام","المسلسلات","التصنيفات","الرائج","الأعلى تقييماً","المنصات","شركات الإنتاج","سينما العالم"]:["Home","Movies","Series","Genres","Trending","Top Rated","Platforms","Studios","World Cinema"];
+$("#sideNav button").forEach((b,i)=>{const glyph=["⌂","▣","▣","▦","✦","♜","▣","▤","◎"][i]||"";b.textContent=glyph+"　"+(navLabels[i]||"")});
+initGenres();loadHome();
 </script></body></html>
