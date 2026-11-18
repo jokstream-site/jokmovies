@@ -288,7 +288,7 @@ async function jokFindSubtitles(item,type){
  const cache=new Map();
  let library=[],activeCategory="All";
  const labels={en:"Latest additions",ar:"أحدث الإضافات",es:"Novedades",fr:"Ajouts récents"};
- const categoryLabels={en:["Movies","Series","Anime","Action","Drama"],ar:["الأفلام","المسلسلات","الأنمي","أكشن","دراما"],es:["Películas","Series","Anime","Acción","Drama"],fr:["Films","Séries","Anime","Action","Drame"]};
+ const categoryLabels={en:["Movies","Series","Anime","Action","Drama","Comedy","Thriller","Adventure","Top Rated","Trending"],ar:["الأفلام","المسلسلات","الأنمي","أكشن","دراما","كوميديا","تشويق","مغامرة","الأعلى تقييماً","الرائج"],es:["Películas","Series","Anime","Acción","Drama","Comedia","Suspense","Aventura","Mejor valoradas","Tendencias"],fr:["Films","Séries","Anime","Action","Drame","Comédie","Thriller","Aventure","Les mieux notés","Tendances"]};
  const locale=()=>lang==="ar-SA"?"ar":lang==="es-ES"?"es":lang==="fr-FR"?"fr":"en";
  const text=(en,ar,es,fr)=>({en,ar,es,fr}[locale()]||en);
  const getType=x=>x.type==="tv"?"tv":"movie";
@@ -319,18 +319,20 @@ async function jokFindSubtitles(item,type){
   const host=$("#librarySections");host.replaceChildren();
   const note=document.createElement("p");note.className="catalog-empty";note.textContent=text("Loading the JOK curated library…","جارٍ تحميل مكتبة JOK المختارة…","Cargando la biblioteca JOK…","Chargement de la bibliothèque JOK…");host.append(note);
   
-  const [manual,feeds]=await Promise.all([
+  const [manual,feedResults]=await Promise.all([
    Promise.all(catalog.map(getItem)),
-   Promise.all([
+   Promise.allSettled([
     api("/trending/all/week",{page:1}),api("/trending/all/week",{page:2}),
     api("/movie/popular",{page:1}),api("/movie/popular",{page:2}),
     api("/tv/popular",{page:1}),api("/tv/popular",{page:2}),
     api("/movie/top_rated",{page:1}),api("/tv/top_rated",{page:1}),
     api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
     api("/discover/tv",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2}),
-    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1})
-   ]).catch(e=>{console.warn("JOK discovery feeds unavailable",e);return []})
+    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:1}),
+    api("/discover/movie",{with_genres:16,with_origin_country:"JP",sort_by:"popularity.desc",page:2})
+   ])
   ]);
+  const feeds=feedResults.filter(x=>x.status==="fulfilled").map(x=>x.value);
   const genreNames={28:"Action",12:"Adventure",16:"Animation",35:"Comedy",80:"Crime",99:"Documentary",18:"Drama",10751:"Family",14:"Fantasy",36:"History",27:"Horror",9648:"Mystery",10749:"Romance",878:"Sci-Fi",53:"Thriller",10752:"War"};
   const byId=new Map();
   for(const item of manual.filter(Boolean))byId.set(item.media_type+":"+item.id,item);
@@ -350,6 +352,9 @@ async function jokFindSubtitles(item,type){
   const anime=library.filter(x=>x.jokCategories.includes("Anime")||(x.original_language==="ja"&&(x.genre_ids||[]).includes(16)));
   const action=library.filter(x=>x.jokCategories.includes("Action")||(x.genre_ids||[]).includes(28));
   const drama=library.filter(x=>x.jokCategories.includes("Drama")||(x.genre_ids||[]).includes(18));
+  const comedy=library.filter(x=>x.jokCategories.includes("Comedy")||(x.genre_ids||[]).includes(35));
+  const thriller=library.filter(x=>x.jokCategories.includes("Thriller")||(x.genre_ids||[]).includes(53));
+  const adventure=library.filter(x=>x.jokCategories.includes("Adventure")||(x.genre_ids||[]).includes(12));
   const featured=library.filter(x=>catalog.find(c=>c.id===x.id&&c.featured));
   const hero=featured[0]||byAdded[0];heroItem=hero;
   $("#hero").style.backgroundImage="url('"+img(hero.backdrop_path||hero.poster_path,"w1280")+"')";
@@ -364,7 +369,12 @@ async function jokFindSubtitles(item,type){
    section(cats[1],series),
    section(cats[2],anime),
    section(cats[3],action),
-   section(cats[4],drama)
+   section(cats[4],drama),
+   section(cats[5],comedy),
+   section(cats[6],thriller),
+   section(cats[7],adventure),
+   section(cats[8],[...library].sort((a,b)=>(b.vote_average||0)-(a.vote_average||0)).slice(0,60)),
+   section(cats[9],[...library].sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,60))
   );
  }
  async function browseView(view){
