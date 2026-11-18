@@ -451,10 +451,15 @@ async function jokFindSubtitles(item,type){
  const similar=$("#similar");if(similar){similar.style.display="none";similar.previousElementSibling?.remove()}
  $("#region")?.remove();
  // A player is not represented as playable unless a provider integration returns an authorized source.
- const JOK_EMBED_PROVIDERS=[{id:"vidsrc",name:"VidSrc",host:"vidsrc.sh"}];
+ const JOK_EMBED_PROVIDERS=[{id:"vidlink",name:"VidLink",host:"vidlink.pro"},{id:"vidsrc",name:"VidSrc",host:"vidsrc.sh"}];
 function jokEmbedUrl(provider,item,type,episode){
  const id=String(item.id||"");
  if(!/^\\d+$/.test(id))throw Error("Invalid TMDB title ID");
+ if(provider.id==="vidlink"){
+  if(type==="tv"&&episode)return "https://vidlink.pro/tv/"+id+"/"+Number(episode.season)+"/"+Number(episode.episode)+"?primaryColor=F59E0B&secondaryColor=241A0B&iconColor=FFF2D1&icons=default&player=default&title=true&poster=true&autoplay=false&nextbutton=true";
+  if(type==="movie")return "https://vidlink.pro/movie/"+id+"?primaryColor=F59E0B&secondaryColor=241A0B&iconColor=FFF2D1&icons=default&player=default&title=true&poster=true&autoplay=false";
+  throw Error("VidLink needs a selected season and episode for series.");
+ }
  const base="https://"+provider.host+"/embed/"+(type==="tv"?"tv/":"movie/")+id;
  return type==="tv"&&episode?base+"/"+Number(episode.season)+"/"+Number(episode.episode):base;
 }
@@ -465,8 +470,15 @@ function jokLoadEmbed(provider){
  $("#placeholder").classList.add("hidden");frame.classList.add("active");
  frame.src="about:blank";requestAnimationFrame(()=>{frame.src=url});
  $("#playerStatus").textContent="Loading "+provider.name+"…";
- $("#playerNote").textContent="Source: "+provider.name+" · third-party embed. Popups are restricted by the iframe sandbox; some providers may not work under these restrictions.";
+ $("#playerNote").textContent="Source: "+provider.name+" · third-party embed. Playback and availability depend on the provider.";
 }
+// VidLink progress messages: accept only the documented provider origin.
+window.addEventListener("message",event=>{
+ if(event.origin!=="https://vidlink.pro")return;
+ if(event.data?.type==="MEDIA_DATA"&&event.data.data&&typeof event.data.data==="object"){
+  try{localStorage.setItem("vidLinkProgress",JSON.stringify(event.data.data))}catch(_){}
+ }
+});
 function jokResetEmbed(){
  const frame=$("#jokEmbedFrame");if(frame){frame.src="about:blank";frame.classList.remove("active")}
  $("#jokEmbedSources")?.replaceChildren();
