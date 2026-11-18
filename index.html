@@ -355,7 +355,28 @@ async function jokFindSubtitles(item,type){
    byId.set(type+":"+item.id,merged);
    if(platform&&!platformItems[platform].some(x=>x.id===item.id&&x.media_type===type))platformItems[platform].push(merged);
   }}
-  library=[...byId.values()].filter(x=>x.poster_path);
+  const availableIds={movie:new Set(),tv:new Set()};
+  const candidates=[...byId.values()].filter(x=>x.poster_path).sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,300);
+  library=[];
+  try{
+   for(const type of ["movie","tv"]){
+    const ids=candidates.filter(x=>x.media_type===type).map(x=>String(x.id));
+    for(let i=0;i<ids.length;i+=60){
+     const params=new URLSearchParams({type,ids:ids.slice(i,i+60).join(",")});
+     const response=await fetch("/.netlify/functions/vidsrc?"+params.toString(),{headers:{Accept:"application/json"}});
+     if(!response.ok)throw new Error("VidSrc availability check failed ("+response.status+")");
+     const result=await response.json();
+     (result.available||[]).forEach(id=>availableIds[type].add(String(id)));
+    }
+   }
+   library=candidates.filter(x=>availableIds[x.media_type]?.has(String(x.id))).map(x=>({...x,jokAvailableProviders:["VidSrc"]}));
+  }catch(error){
+   console.error("JOK provider verification failed:",error);
+   host.replaceChildren();
+   const failed=document.createElement("div");failed.className="catalog-empty";
+   failed.textContent=text("Availability could not be verified. Unverified titles are hidden until the provider check is restored.","تعذر التحقق من التوفر؛ لذلك لن نعرض أعمالاً غير مؤكدة حتى تعود خدمة الفحص.","No se pudo verificar la disponibilidad. Los títulos no verificados están ocultos.","Impossible de vérifier la disponibilité. Les titres non vérifiés sont masqués.");
+   host.append(failed);return;
+  }
 
   if(!library.length){host.replaceChildren();const empty=document.createElement("div");empty.className="catalog-empty";empty.textContent=text("The JOK catalog is ready for your TMDB IDs. Add titles in catalog.js and they will appear here automatically.","كتالوج JOK جاهز لإضافة معرّفات TMDB. أضف الأعمال في catalog.js وستظهر هنا تلقائياً.","El catálogo JOK está listo para tus IDs de TMDB.","Le catalogue JOK est prêt pour vos identifiants TMDB.");host.append(empty);return}
   const byAdded=[...library].sort((a,b)=>(b.jokAdded||"").localeCompare(a.jokAdded||""));
