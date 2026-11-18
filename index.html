@@ -156,8 +156,9 @@ async function jokDual(movieParams,tvParams){
   const section=document.createElement("section");section.className="catalog-block";
   const h=document.createElement("h3");h.textContent=heading;const grid=document.createElement("div");grid.className="browse-grid";section.append(h,grid);root.append(section);
   try{
-   const items=await jokDiscover(type,{...params,page:1});
-   const safe=items.filter(x=>{const d=type==="movie"?(x.release_date||""):(x.first_air_date||"");const countries=Array.isArray(x.origin_country)?x.origin_country:[];const requested=(params.with_origin_country||"").split("|").filter(Boolean);const countryOK=!requested.length||requested.some(c=>countries.includes(c));return x.poster_path&&d&&d<=jokLocalDate()&&countryOK;});
+   let items=await jokDiscover(type,{...params,page:1});
+   let safe=items.filter(x=>{const d=type==="movie"?(x.release_date||""):(x.first_air_date||"");const countries=Array.isArray(x.origin_country)?x.origin_country:[];const requested=(params.with_origin_country||"").split("|").filter(Boolean);const countryOK=!requested.length||requested.some(c=>countries.includes(c));return x.poster_path&&d&&d<=jokLocalDate()&&countryOK;});
+   if(!safe.length&&params.with_original_language==="ar"&&params.with_origin_country){items=await jokDiscover(type,{with_original_language:"ar",sort_by:"popularity.desc",page:1});safe=items.filter(x=>x.poster_path&&(type==="movie"?(x.release_date||""):(x.first_air_date||""))<=(jokLocalDate()));}
    safe.sort((a,b)=>jokRelease(b,type).localeCompare(jokRelease(a,type)));
    safe.forEach(x=>grid.append(card(x,type)));
    if(!safe.length){const p=document.createElement("p");p.className="empty-state";p.textContent="No matching titles found.";grid.append(p)}
@@ -176,7 +177,8 @@ async function jokStudioPage(name){
 }
 async function jokWorldPage(c){
  $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent="Cinema from "+c.name;
- await jokDual({with_origin_country:c.code,sort_by:"primary_release_date.desc"},{with_origin_country:c.code,sort_by:"first_air_date.desc"});
+ if(c.code==="KR"){await jokDual({with_origin_country:"KR",with_original_language:"ko",sort_by:"popularity.desc"},{with_origin_country:"KR",with_original_language:"ko",sort_by:"popularity.desc"});return;}
+ await jokDual({with_origin_country:c.code,sort_by:"popularity.desc"},{with_origin_country:c.code,sort_by:"popularity.desc"});
 }
 async function jokLanguagePage(name,code){
  $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent=name+" language cinema";
