@@ -13,6 +13,20 @@
 @media(max-width:850px){.library-row .cards{grid-auto-columns:132px}.hero{min-height:350px}.library-row .head h2{font-size:17px}}
 
 #jokEmbedSources{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #ffffff16;background:#0b0a10}#jokEmbedSources button{border:1px solid #ffffff28;background:#17131e;color:#cfc8d8;border-radius:20px;padding:8px 12px;font-size:12px}#jokEmbedSources button.active{border-color:#f59e0b;color:#ffda8b;background:#f59e0b18}#jokEmbedFrame{display:none;width:100%;height:100%;min-height:260px;border:0;background:#000}#jokEmbedFrame.active{display:block}.embed-note{font-size:11px;color:#999;padding:0 14px 12px;line-height:1.5}
+/* Mobile-first JOK layout refresh */
+.quick-categories{display:none!important}#homeSections{display:grid;gap:24px}
+#homeSections .library-row .cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:initial;overflow:visible;gap:14px;padding:0}
+#homeSections .library-row .card,.browse-grid .card{max-width:none;min-width:0}#browse{min-width:0}
+#catalogTools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 18px}
+#catalogTools select,#catalogTools input{width:100%;min-width:0;min-height:44px;background:#15121b;color:#f8f7fb;border:1px solid #f59e0b55;border-radius:12px;padding:10px 12px}
+.browse-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+#player.modal{padding:clamp(8px,2vw,22px);display:none;align-items:center;justify-content:center;overflow:auto}#player.modal.open{display:flex}
+#player .player-panel{width:min(100%,1100px);max-width:1100px;margin:auto;max-height:calc(100dvh - 16px);overflow:auto;border-radius:16px}
+#player .player-stage{width:100%;height:auto;min-height:0;aspect-ratio:16/9;overflow:hidden}#jokEmbedFrame{width:100%;height:100%;min-height:0;position:absolute;inset:0}
+#player .player-top{position:sticky;top:0;background:#08070b;z-index:3}
+@media(max-width:850px){.main{padding:0 12px calc(86px + env(safe-area-inset-bottom))}.top{grid-template-columns:minmax(0,1fr) auto}.top .search{grid-column:1/-1}.hero{min-height:300px;height:auto;border-radius:17px}.hero-copy{padding:18px;max-width:100%}.hero h1{font-size:clamp(26px,7vw,36px)}#homeSections{gap:22px;margin-top:22px}#homeSections .library-row .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#homeSections .library-row .head h2{font-size:17px}#homeSections .library-row .view-more{padding:8px 12px;white-space:nowrap}.browse-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}#catalogTools{grid-template-columns:1fr;gap:8px}#player.modal{padding:0;align-items:center}#player .player-panel{width:100%;max-height:100dvh;border-radius:0;border-left:0;border-right:0}#player .player-stage{aspect-ratio:16/9;min-height:0}#jokEmbedSources{padding:9px 12px;flex-wrap:wrap}.player-note,.embed-note{padding-left:12px;padding-right:12px}}
+@media(min-width:520px) and (max-width:850px){#homeSections .library-row .cards,.browse-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:380px){#homeSections .library-row .cards,.browse-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.info{padding:8px}}
 </style>
 </head>
 <body>
@@ -303,21 +317,15 @@ async function jokFindSubtitles(item,type){
  }
  function setBrowse(titleText,items){
   $("#homeSections").classList.add("hidden");$("#browse").classList.remove("hidden");$("#browseTitle").textContent=titleText;
-  $("#catalogTools").replaceChildren();
-  const grid=$("#results");grid.replaceChildren();
-  if(!items.length){const p=document.createElement("p");p.className="catalog-empty";p.textContent=text("This collection is being curated. New titles will appear here soon.","هذه المجموعة قيد الإعداد. ستظهر الأعمال الجديدة هنا قريباً.","Esta colección se está preparando.","Cette collection est en cours de préparation.");grid.append(p);return}
-  grid.append(...items.map(x=>card(x,x.media_type)));
- }
- function section(name,items){
-  const wrap=document.createElement("section");wrap.className="library-row";
-  const head=document.createElement("div");head.className="head";
-  const h=document.createElement("h2");h.textContent=name;
-  const more=document.createElement("button");more.className="view-more";more.textContent=text("View More","عرض المزيد","Ver más","Voir plus");
-  more.onclick=()=>setBrowse(name,items);
-  head.append(h,more);const cards=document.createElement("div");cards.className="cards";
-  if(items.length){for(const item of items){const node=card(item,item.media_type);const badge=document.createElement("span");badge.className="kind";badge.textContent=item.media_type==="tv"?text("SERIES","مسلسل","SERIE","SÉRIE"):text("MOVIE","فيلم","PELÍCULA","FILM");node.append(badge);cards.append(node)}}
-  else{const empty=document.createElement("p");empty.className="catalog-empty";empty.textContent=text("No titles in this collection yet.","لا توجد أعمال في هذه المجموعة بعد.","Aún no hay títulos.","Aucun titre pour le moment.");cards.append(empty)}
-  wrap.append(head,cards);return wrap;
+  const tools=$("#catalogTools");tools.replaceChildren();
+  const genre=document.createElement("select");genre.setAttribute("aria-label","Filter by genre");
+  [["all",text("All genres","كل الأنواع","Todos los géneros","Tous les genres")],["28","Action"],["12","Adventure"],["35","Comedy"],["18","Drama"],["27","Horror"],["9648","Mystery"],["10749","Romance"],["878","Sci-Fi"],["53","Thriller"],["16","Animation"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;genre.append(o)});
+  const company=document.createElement("input");company.type="search";company.placeholder=text("Search production company…","ابحث عن شركة الإنتاج…","Buscar productora…","Rechercher un studio…");company.setAttribute("aria-label","Search production company");
+  const sort=document.createElement("select");sort.setAttribute("aria-label","Sort titles");
+  [["new",text("Newest","الأحدث","Más recientes","Plus récents")],["top",text("Top rated","الأعلى تقييماً","Mejor valorados","Mieux notés")],["popular",text("Most popular","الأكثر شعبية","Más populares","Plus populaires")]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sort.append(o)});
+  tools.append(genre,company,sort);const grid=$("#results");
+  const render=()=>{let filtered=[...items];if(genre.value!=="all")filtered=filtered.filter(x=>(x.genre_ids||[]).includes(Number(genre.value)));const q=company.value.trim().toLocaleLowerCase();if(q)filtered=filtered.filter(x=>(x.production_companies||[]).some(c=>(c.name||"").toLocaleLowerCase().includes(q)));if(sort.value==="top")filtered.sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));else if(sort.value==="popular")filtered.sort((a,b)=>(b.popularity||0)-(a.popularity||0));else filtered.sort((a,b)=>(date(b)||"").localeCompare(date(a)||""));grid.replaceChildren();if(!filtered.length){const p=document.createElement("p");p.className="catalog-empty";p.textContent=text("No titles match these filters.","لا توجد أعمال تطابق عوامل التصفية.","No hay títulos con estos filtros.","Aucun titre ne correspond à ces filtres.");grid.append(p)}else grid.append(...filtered.map(x=>card(x,x.media_type)))};
+  genre.onchange=render;company.oninput=render;sort.onchange=render;render();
  }
  async function loadLibrary(){
   const host=$("#librarySections");host.replaceChildren();
@@ -394,32 +402,11 @@ async function jokFindSubtitles(item,type){
   $("#heroMeta").textContent=(hero.media_type==="tv"?text("SERIES","مسلسل","SERIE","SÉRIE"):text("MOVIE","فيلم","PELÍCULA","FILM"))+" · ★ "+Number(hero.vote_average||0).toFixed(1)+" · "+(date(hero)||"").slice(0,4);
   $("#heroText").textContent=hero.overview||text("Selected for the JOK library.","اختير لمكتبة JOK.","Seleccionado para JOK.","Sélectionné pour JOK.");
   $("#heroPlay").onclick=()=>play(hero,hero.media_type);$("#heroInfo").onclick=()=>showDetails(hero,hero.media_type);
-  const cats=categoryLabels[locale()];
+  const latestMovies=[...movies].sort((a,b)=>(date(b)||"").localeCompare(date(a)||"")).slice(0,12);
+  const latestSeries=[...series].sort((a,b)=>(date(b)||"").localeCompare(date(a)||"")).slice(0,12);
   host.replaceChildren(
-   section(labels[locale()]||labels.en,byAdded),
-   section(cats[0],movies),
-   section(cats[1],series),
-   section(text("Action Movies","أفلام أكشن","Películas de acción","Films d'action"),movies.filter(x=>(x.genre_ids||[]).includes(28))),
-   section(text("Action Series","مسلسلات أكشن","Series de acción","Séries d'action"),series.filter(x=>(x.genre_ids||[]).includes(10759))),
-   section(text("Drama Movies","أفلام دراما","Películas dramáticas","Films dramatiques"),movies.filter(x=>(x.genre_ids||[]).includes(18))),
-   section(text("Drama Series","مسلسلات دراما","Series dramáticas","Séries dramatiques"),series.filter(x=>(x.genre_ids||[]).includes(18))),
-   section(text("Comedy Movies","أفلام كوميديا","Comedias","Comédies"),movies.filter(x=>(x.genre_ids||[]).includes(35))),
-   section(text("Comedy Series","مسلسلات كوميديا","Series de comedia","Séries comiques"),series.filter(x=>(x.genre_ids||[]).includes(35))),
-   section(text("Thriller Movies","أفلام تشويق","Thrillers","Thrillers"),movies.filter(x=>(x.genre_ids||[]).includes(53))),
-   section(text("Thriller Series","مسلسلات تشويق","Series de suspense","Séries à suspense"),series.filter(x=>(x.genre_ids||[]).includes(9648))),
-   section(cats[2],anime),
-   section(text("Netflix · selected global regions","Netflix · مناطق عالمية مختارة","Netflix · regiones globales","Netflix · régions mondiales"),platformItems["Netflix"]),
-   section(text("Prime Video · selected global regions","Prime Video · مناطق عالمية مختارة","Prime Video · regiones globales","Prime Video · régions mondiales"),platformItems["Prime Video"]),
-   section(text("Disney+ · selected global regions","Disney+ · مناطق عالمية مختارة","Disney+ · regiones globales","Disney+ · régions mondiales"),platformItems["Disney+"]),
-   section(text("Max · selected global regions","Max · مناطق عالمية مختارة","Max · regiones globales","Max · régions mondiales"),platformItems["Max"]),
-   section(text("Crunchyroll · selected global regions","Crunchyroll · مناطق عالمية مختارة","Crunchyroll · regiones globales","Crunchyroll · régions mondiales"),platformItems["Crunchyroll"]),
-   section(cats[3],action),
-   section(cats[4],drama),
-   section(cats[5],comedy),
-   section(cats[6],thriller),
-   section(cats[7],adventure),
-   section(cats[8],[...library].sort((a,b)=>(b.vote_average||0)-(a.vote_average||0)).slice(0,60)),
-   section(cats[9],[...library].sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,60))
+   section(text("Latest Movies","أحدث الأفلام","Películas recientes","Films récents"),latestMovies),
+   section(text("Latest Series","أحدث المسلسلات","Series recientes","Séries récentes") ,latestSeries)
   );
  }
  async function browseView(view){
