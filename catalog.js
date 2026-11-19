@@ -1,0 +1,26 @@
+/* JOK editorial catalog. Add/remove TMDB IDs here; metadata is fetched from TMDB. */
+window.JOK_CATALOG = [
+  {id:550,type:"movie",category:["Drama","Thriller"],added:"2026-11-18",featured:true},
+  {id:157336,type:"movie",category:["Sci-Fi","Drama"],added:"2026-11-18",featured:true},
+  {id:155,type:"movie",category:["Action","Crime"],added:"2026-11-18",featured:true},
+  {id:27205,type:"movie",category:["Sci-Fi","Action"],added:"2026-11-18"},
+  {id:238,type:"movie",category:["Crime","Drama"],added:"2026-11-18"},
+  {id:299534,type:"movie",category:["Action","Adventure"],added:"2026-11-18"},
+  {id:603,type:"movie",category:["Sci-Fi","Action"],added:"2026-11-18"},
+  {id:13,type:"movie",category:["Drama","Romance"],added:"2026-11-18"},
+  {id:680,type:"movie",category:["Crime","Drama"],added:"2026-11-18"},
+  {id:120,type:"movie",category:["Anime","Animation"],added:"2026-11-18"},
+  {id:129,type:"movie",category:["Anime","Adventure"],added:"2026-11-18"},
+  {id:11,type:"movie",category:["Adventure","Sci-Fi"],added:"2026-11-18"},
+  {id:1399,type:"tv",category:["Drama","Fantasy"],added:"2026-11-18",featured:true},
+  {id:1396,type:"tv",category:["Crime","Drama"],added:"2026-11-18",featured:true},
+  {id:66732,type:"tv",category:["Sci-Fi","Drama"],added:"2026-11-18"},
+  {id:94605,type:"tv",category:["Anime","Animation","Action"],added:"2026-11-18"},
+  {id:46298,type:"tv",category:["Anime","Action"],added:"2026-11-18"},
+  {id:85937,type:"tv",category:["Anime","Action"],added:"2026-11-18"},
+  {id:95479,type:"tv",category:["Anime","Action"],added:"2026-11-18"},
+  {id:37854,type:"tv",category:["Anime","Adventure"],added:"2026-11-18"},
+  {id:71446,type:"tv",category:["Crime","Thriller"],added:"2026-11-18"},
+  {id:94997,type:"tv",category:["Drama","Fantasy"],added:"2026-11-18"},
+  {id:94664,type:"tv",category:["Drama","Mystery"],added:"2026-11-18"}
+];
