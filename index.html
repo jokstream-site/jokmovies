@@ -217,7 +217,7 @@ function activatePlayer(provider){
   currentProvider=provider;$("[data-player]").forEach(b=>b.classList.toggle("active",b.dataset.player===provider));
   const stage=$("#playerStage");$$("iframe",stage).forEach(f=>f.remove());
   let url=playerUrl(provider,activeItem,activeType,activeEpisode);
-  if(provider==="vidsrc"&&url){url+=(url.includes("?")?"&":"?")+"ds_lang="+encodeURIComponent($("#playerSubtitle").value||"en");const customSub=$("#customSubtitle").value.trim();if(customSub&&/^https:\/\//i.test(customSub))url+="&sub_url="+encodeURIComponent(customSub)+"&sub_label=External&sub_lang="+encodeURIComponent($("#playerSubtitle").value||"en");}
+  if(provider==="vidsrc"&&url){url+=(url.includes("?")?"&":"?")+"ds_lang="+encodeURIComponent($("#playerSubtitle").value||"en");const saved=localStorage.getItem("jok.progress."+activeItem.id);if(saved&&Number(saved)>30)url+="&startAt="+encodeURIComponent(Math.floor(Number(saved)));const customSub=$("#customSubtitle").value.trim();if(customSub&&/^https:\/\//i.test(customSub))url+="&sub_url="+encodeURIComponent(customSub)+"&sub_label=External&sub_lang="+encodeURIComponent($("#playerSubtitle").value||"en");}
   if(provider==="vidlink"&&url&&activeType!=="anime"){const customSub=$("#customSubtitle").value.trim();if(customSub&&/^https:\/\//i.test(customSub))url+="&sub_file="+encodeURIComponent(customSub)+"&sub_label=External";}
   const placeholder=$("#playerPlaceholder");
   if(!url){placeholder.hidden=false;placeholder.textContent=(activeType==="tv"||activeType==="anime")?"Select an episode and, for anime, a MAL match before playback.":"Player unavailable.";return}
@@ -279,6 +279,17 @@ function bindEvents(){
   $$("[data-player]").forEach(b=>b.addEventListener("click",()=>activatePlayer(b.dataset.player)));
   document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("#playerModal").classList.contains("open"))closePlayer();else if($("#detailsModal").classList.contains("open"))closeDetails()}});
 }
+window.addEventListener("message",event=>{
+  if(event.origin!=="https://vidsrc.sh")return;
+  const frame=$("#playerStage iframe");if(!frame||event.source!==frame.contentWindow)return;
+  const payload=event.data;if(!payload||payload.type!=="PLAYER_EVENT"||!payload.data)return;
+  const data=payload.data;const id=(data.player_info&&(data.player_info.tmdb||data.player_info.imdb))||activeItem?.id;
+  if(!id)return;
+  if(["playing","paused","seeked"].includes(data.player_status)&&Number.isFinite(Number(data.player_progress))){
+    try{localStorage.setItem("jok.progress."+id,String(Math.max(0,Number(data.player_progress))))}catch(e){}
+  }
+  if(data.player_status==="completed"){try{localStorage.removeItem("jok.progress."+id)}catch(e){}}
+});
 async function resolveAnimeMalId(item){
   const select=$("#animeMatch");select.hidden=false;select.innerHTML="<option value=\"\">Finding MAL anime matches…</option>";activeMalId=null;
   try{const response=await fetch("https://api.jikan.moe/v4/anime?q="+encodeURIComponent(mediaTitle(item))+"&limit=8&sfw=true");if(!response.ok)throw new Error("MAL lookup "+response.status);
