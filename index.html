@@ -166,10 +166,10 @@ async function showDetails(item,type){
   const tmdbType=type==="anime"?"tv":type;
   $("#castList").textContent="Loading…";$("#similarRow").replaceChildren();$("#seasonSection").hidden=type!=="tv"&&type!=="anime";$("#trailerBox").hidden=true;$("#trailerBox").replaceChildren();$("#detailTrailer").hidden=true;
   $("#detailPlay").onclick=()=>openPlayer(activeItem,activeType,activeEpisode);
-  const calls=[api("/"+tmdbType+"/"+item.id+"/similar",{}),api("/"+tmdbType+"/"+item.id,{append_to_response:"videos"})];
+  const calls=[api("/"+tmdbType+"/"+item.id+"/similar",{}),api("/"+tmdbType+"/"+item.id,{append_to_response:"videos,credits"})];
   if(type==="tv"||type==="anime")calls.push(api("/tv/"+item.id,{}));
   try{
-    const values=await Promise.all(calls);$("#castList").textContent="Cast details are not exposed by the current Worker route allowlist.";
+    const values=await Promise.all(calls);const cast=(values[1].credits&&values[1].credits.cast)||[];$("#castList").replaceChildren();cast.slice(0,12).forEach(person=>{const pill=document.createElement("span");pill.className="cast-pill";pill.textContent=person.name+(person.character?" · "+person.character:"");$("#castList").append(pill)});if(!cast.length)$("#castList").textContent="Cast details are not available for this title.";
     renderCards($("#similarRow"),values[0].results||[],type==="anime"?"anime":type,false);
     const videos=(values[1].videos&&values[1].videos.results)||[];const trailer=videos.find(v=>v.site==="YouTube"&&v.type==="Trailer"&&v.official)||videos.find(v=>v.site==="YouTube"&&v.type==="Trailer");
     if(trailer){const b=$("#detailTrailer");b.hidden=false;b.onclick=()=>{const box=$("#trailerBox");box.hidden=false;box.innerHTML=`<div style="aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden"><iframe title="Official trailer" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(trailer.key)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="width:100%;height:100%;border:0"></iframe></div>`;};}
@@ -206,11 +206,18 @@ function playerUrl(provider,item,type,episode){
   return base+id+"?primaryColor=a78bfa&title=true&autoplay=false";
 }
 let currentProvider="vidsrc";
+async function checkPlayerAvailability(){
+  const note=$("#playerNote");if(!activeItem)return;
+  const type=activeType==="anime"?"tv":activeType;const id=activeItem.id;
+  let path="https://vidsrc.sh/info/"+(type==="tv"?"tv":"movie")+"/"+encodeURIComponent(id)+".json";
+  if(type==="tv"&&activeEpisode)path="https://vidsrc.sh/info/tv/"+encodeURIComponent(id)+"/"+activeEpisode.season+"/"+activeEpisode.episode+".json";
+  try{const r=await fetch(path,{headers:{Accept:"application/json"}});if(r.ok){const data=await r.json();note.textContent="VidSrc available · "+(data.quality||"Quality varies")+(data.total_episodes?" · "+data.total_episodes+" episodes":"")+" · "+t("playerInfo");}else note.textContent="VidSrc does not list this title right now. Try VidLink if supported.";}catch(e){note.textContent=t("playerInfo")}
+}
 function openPlayer(item,type,episode){
   activeItem=item;activeType=type;activeEpisode=episode||null;activeMalId=null;lastFocused=document.activeElement;currentProvider=type==="anime"?"vidlink":"vidsrc";$("#animeMatch").hidden=type!=="anime";if(type==="anime")resolveAnimeMalId(item);
   $("#detailsModal").classList.remove("open");$("#playerModal").classList.add("open");
   $("#playerTitle").textContent=mediaTitle(item)+(episode?" — S"+episode.season+" E"+episode.episode:"");
-  activatePlayer(currentProvider); 
+  activatePlayer(currentProvider);checkPlayerAvailability(); 
 }
 function activatePlayer(provider){
   if(activeType==="anime"&&provider==="vidsrc")provider="vidlink";
@@ -271,7 +278,7 @@ function bindEvents(){
   $("#searchMore").addEventListener("click",()=>doSearch(searchState.query,true));
   $("#search").addEventListener("input",e=>{clearTimeout(searchState.timer);const q=e.target.value.trim();if(!q){showView("homeView");return}searchState.timer=setTimeout(()=>doSearch(q,false),320)});
   $("#closeDetails").addEventListener("click",closeDetails);$("#closePlayer").addEventListener("click",closePlayer);
-  $("#playerSubtitle").addEventListener("change",()=>{if($("#playerModal").classList.contains("open"))activatePlayer(currentProvider)});
+  $("#playerSubtitle").addEventListener("change",()=>{if($("#playerModal").classList.contains("open"))activatePlayer(currentProvider)});$("#customSubtitle").addEventListener("change",()=>{if($("#playerModal").classList.contains("open"))activatePlayer(currentProvider)});
   $("#animeMode").addEventListener("change",()=>{if(activeType==="anime"&&$("#playerModal").classList.contains("open"))activatePlayer("vidlink")});
   $("#animeMatch").addEventListener("change",e=>{activeMalId=e.target.value||null;activatePlayer("vidlink")});
   $("#detailsModal").addEventListener("click",e=>{if(e.target.id==="detailsModal")closeDetails()});
