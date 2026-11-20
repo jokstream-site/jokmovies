@@ -1,43 +1,65 @@
 # JOK NOIR
 
-A responsive movie, series, and anime discovery website powered by TMDB metadata through the existing Cloudflare Worker proxy.
+Responsive movie, series and anime discovery website.
 
-## Included
+## Current implementation
 
-- Mobile-first dark cinema interface with desktop sidebar and mobile bottom navigation.
-- English, Arabic (RTL), Spanish, and French interface and TMDB language selection.
-- Trending, popular, top-rated movies and series, Japanese animation discovery, genres, and multi-search.
-- Debounced search, paginated browse/search results, lazy-loaded poster images, and session caching.
-- Title details, similar titles, cast placeholder (the current proxy allowlist does not expose credits), TV seasons and episodes.
-- Player selection for VidSrc and VidLink, with episode selection for TV.
-- Page-level popup guard and a restrictive iframe sandbox. Some third-party players may not support all sandbox settings.
+- Dark cinematic, mobile-first interface with desktop navigation and mobile bottom navigation.
+- English, Arabic (RTL), Spanish and French UI language selection.
+- TMDB discovery through the existing Cloudflare Worker proxy; no TMDB token is exposed in the browser.
+- Home sections: trending, popular movies, popular series, top-rated movies/series, Japanese animation discovery.
+- Search with debounce, paginated browsing, genre filtering and session caching.
+- Detail dialog with synopsis, similar titles, TV seasons/episodes, and an official YouTube trailer when TMDB provides one.
+- Separate full-title player dialog with VidSrc and VidLink source selection.
+- VidSrc latest movie and TV feeds, paginated on demand, refreshed every five minutes while a visitor has the page open.
+- Subtitle language selection for VidSrc, and optional external HTTPS VTT/SRT URL for VidSrc / HTTPS VTT for VidLink as supported by their documentation.
+- VidSrc player progress events are saved locally and used to resume playback.
+- Anime playback uses VidLink's MAL-based endpoint. The app queries Jikan for candidate MAL IDs and requires a user choice if more than one match is returned. Sub/Dub and fallback are supported.
 
-## Existing TMDB proxy
+## Existing TMDB Worker
 
-The frontend calls the existing Worker:
+The frontend calls:
 
 `https://jokflix.abdonarjah.workers.dev/api/tmdb?path=/trending/all/week&language=en-US`
 
-It sends the requested TMDB API path in the `path` query parameter. The TMDB bearer token remains in the Worker secret and is never included in browser code.
+The Worker receives the TMDB API path in the `path` query parameter. Keep the bearer token in the Worker secret. Do not put it in browser JavaScript.
 
-Do not deploy the sample Worker in this repository over the existing `jokflix` Worker.
+Do not deploy any sample Worker over the existing `jokflix` Worker.
 
-## Player integrations
+## Provider integrations
 
-- VidLink movie and TV embed formats follow its published documentation:
-  - `/movie/{tmdbId}`
-  - `/tv/{tmdbId}/{season}/{episode}`
-- VidLink's dedicated anime endpoint requires a MyAnimeList ID; the current catalogue integration does not automatically resolve MAL IDs, so the site does not fabricate them.
-- VidSrc is kept as a selectable provider using the existing project's embed URL convention. Its documentation endpoint was not accessible during this revision; verify its current URL requirements and playback behavior before public launch.
+### VidSrc.sh
 
-TMDB discovery data is metadata, not a guarantee that a title is available from either player provider. Only use third-party embeds where permitted and appropriate.
+- Movie: `/embed/movie/{id}`
+- TV series picker: `/embed/tv/{id}`
+- Episode: `/embed/tv/{id}/{season}/{episode}`
+- Latest feeds: `/movies/latest/page-{N}.json`, `/tvshows/latest/page-{N}.json`
+- Availability: `/info/movie/{id}.json`, `/info/tv/{id}.json`
+- Subtitles: `ds_lang`, `sub_url`, `sub_label`, `sub_lang`
+- Player events: `PLAYER_EVENT` from the VidSrc origin.
+
+### VidLink.pro
+
+- Movie: `/movie/{tmdbId}`
+- TV episode: `/tv/{tmdbId}/{season}/{episode}`
+- Anime: `/anime/{MALid}/{episode}/{subOrDub}`
+- Anime uses a MyAnimeList ID, not a TMDB ID. The app resolves candidate MAL IDs through Jikan and lets the viewer select the match.
+- External subtitle: `sub_file` (direct HTTPS VTT URL) and `sub_label`.
+
+## Catalogue refresh behaviour
+
+The home page requests the first page of the latest VidSrc movie and TV feeds and enriches up to 10 entries per feed with TMDB metadata. It refreshes those first pages every five minutes while the page remains open. Additional feed pages can be loaded manually.
+
+This is periodic client-side refresh, not a full server-side mirror of every catalogue ID. VidSrc reports 50 records per feed page and provides daily ID lists. A truly complete searchable catalogue for all visitors requires a scheduled server-side importer and persistent database (for example, a Cloudflare Cron Worker plus D1 or Supabase). That requires a separate backend deployment and storage configuration; this static site does not pretend to have imported every page.
 
 ## Deploy
 
-Configure the Netlify site to build from this repository's `jok-noir-rebuild` branch with the repository root as the publish directory. This is a static site and has no build command. Verify the deploy preview on desktop and mobile before promoting it.
+Configure Netlify to build from `jokstream-site/jokmovies`, branch `jok-noir-rebuild`, publish directory `/` (repository root), and no build command. Verify the Netlify deploy preview on desktop and mobile before public launch.
 
-## Important limitations to verify before public launch
+## Validation still required on the live deploy
 
-- The current Worker allowlist does not include TMDB credits, so cast names are not shown yet.
-- Playback availability depends on external providers and may vary by title, territory, and time.
-- Test iframe fullscreen, subtitle behavior, episode playback, and sandbox compatibility on the actual Netlify deploy preview.
+- Confirm the Worker endpoint is reachable from the Netlify domain and all requested TMDB routes are allowed.
+- Confirm VidSrc feed CORS and player playback in the target browsers.
+- Confirm VidLink anime MAL matches for real titles; ambiguous matches require viewer selection.
+- Test subtitles, fullscreen, TV episode selection and player switching on Android Chrome, iOS Safari and desktop.
+- External providers control their own playback availability, quality, ads and player behaviour. JOK NOIR does not bypass their security controls.
